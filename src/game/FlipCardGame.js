@@ -1,3 +1,7 @@
 function FlipCardGame() {
-  var cards
+  var cards = [];
+
+  this.getCards = () => cards;
 }
+
+export default FlipCardGame;

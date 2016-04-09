@@ -3,9 +3,7 @@ import cardStates from './cardStates.js';
 function Card() {
   var state = cardStates.BACK;
 
-  this.getState = function getState() {
-    return state;
-  }
+  this.getState = () => state;
 
   this.setState = function (value) {
     if (value !== cardStates.BACK && value !== cardStates.FACE) {
