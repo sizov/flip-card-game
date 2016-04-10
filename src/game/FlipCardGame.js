@@ -1,3 +1,4 @@
+import gameStates from "./gameStates";
 import Player from "./Player";
 import Card from "./Card";
 
@@ -14,10 +15,16 @@ function FlipCardGame(options) {
     const players = [];
 
     /**
+     * State of the game - is it new game, in process or finished
+     */
+    var state = gameStates.NEW;
+
+    /**
      * Player who turns cards now
      */
     var currentPlayer;
 
+    this.getState = () => state;
     this.getCards = () => cards;
     this.getCurrentPlayer = () => currentPlayer;
     this.getPlayers = () => players;
