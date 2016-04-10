@@ -20,6 +20,7 @@ function Card(options) {
 
     this.getState = () => state;
     this.getId = () => id;
+    this.getPairId = () => pairId;
 
     this.setState = function (value) {
         if (value !== cardStates.BACK && value !== cardStates.FACE) {
@@ -36,7 +37,7 @@ function Card(options) {
         else if (state === cardStates.BACK) {
             state = cardStates.FACE;
         }
-    }
+    };
 }
 
 export default Card;

@@ -1,4 +1,4 @@
 export default {
-  FACE: 'face',
-  BACK: 'back'
+    FACE: 'face',
+    BACK: 'back'
 };

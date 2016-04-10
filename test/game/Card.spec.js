@@ -28,6 +28,25 @@ test("Card id non-default", (t) => {
     t.equal(card.getId(), 5);
 });
 
+test("Card pairId", (t) => {
+    t.plan(1);
+
+    var card = new Card();
+
+    t.equal(card.getPairId(), undefined);
+});
+
+test("Card pairId non-default", (t) => {
+    t.plan(1);
+
+    var card = new Card({
+        id: 5,
+        pairId: 7
+    });
+
+    t.equal(card.getPairId(), 7);
+});
+
 test("Card setState", (t) => {
     t.plan(1);
 

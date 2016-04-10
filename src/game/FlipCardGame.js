@@ -30,13 +30,13 @@ function FlipCardGame(options) {
         var cards = [],
             pairId = 0;
         for (var i = 0; i < amount; i++) {
-            if (parId % 2 !== 0) {
-                pairId = pairId + 1;
-            }
             cards.push(new Card({
                 id: i,
                 pairId: pairId
             }));
+            if (pairId % 2 !== 0) {
+                pairId = pairId + 1;
+            }
         }
 
         return cards;
