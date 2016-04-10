@@ -1,5 +1,5 @@
 export default {
-  OVER: 'over',
-  PLAYING: 'playing',
-  NEW: 'new'
+    OVER: 'over',
+    PLAYING: 'playing',
+    NEW: 'new'
 };
