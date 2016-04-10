@@ -1,8 +1,15 @@
 import cardStates from './cardStates.js';
 
-function Card() {
+const DEFAULT_OPTIONS = {
+  id: undefined
+};
+
+function Card(options) {
+  options = options || {};
+  options = Object.assign(DEFAULT_OPTIONS, options);
+
   var state = cardStates.BACK;
-  var id;
+  var id = options.id;
 
   this.getState = () => state;
   this.getId = () => id;

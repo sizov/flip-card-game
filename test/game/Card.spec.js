@@ -10,6 +10,24 @@ test("Card state", (t) => {
   t.equal(card.getState(), cardStates.BACK);
 });
 
+test("Card id", (t) => {
+  t.plan(1);
+
+  var card = new Card();
+
+  t.equal(card.getId(), undefined);
+});
+
+test("Card id non-default", (t) => {
+  t.plan(1);
+
+  var card = new Card({
+    id: 5
+  });
+
+  t.equal(card.getId(), 5);
+});
+
 test("Card setState", (t) => {
   t.plan(1);
 
