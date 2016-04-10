@@ -1,13 +1,13 @@
-import test from "tape"
-import Card from "../../src/game/Card"
-import cardStates from "../../src/game/cardStates"
+import test from "tape";
+import Card from "../../src/game/Card";
+import cardStates from "../../src/game/cardStates";
 
 test("Card state", (t) => {
   t.plan(1);
 
   var card = new Card();
 
-  t.equal(cardStates.BACK, card.getState());
+  t.equal(card.getState(), cardStates.BACK);
 });
 
 test("Card setState", (t) => {
@@ -17,7 +17,7 @@ test("Card setState", (t) => {
 
   card.setState(cardStates.FACE);
 
-  t.equal(cardStates.FACE, card.getState());
+  t.equal(card.getState(), cardStates.FACE);
 });
 
 test("Card flip", (t) => {
@@ -25,9 +25,9 @@ test("Card flip", (t) => {
 
   var card = new Card();
 
-  t.equal(cardStates.BACK, card.getState());
+  t.equal(card.getState(), cardStates.BACK);
   card.flip();
-  t.equal(cardStates.FACE, card.getState());
+  t.equal(card.getState(), cardStates.FACE);
   card.flip();
-  t.equal(cardStates.BACK, card.getState());
+  t.equal(card.getState(), cardStates.BACK);
 });

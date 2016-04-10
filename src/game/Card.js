@@ -2,8 +2,10 @@ import cardStates from './cardStates.js';
 
 function Card() {
   var state = cardStates.BACK;
+  var id;
 
   this.getState = () => state;
+  this.getId = () => id;
 
   this.setState = function (value) {
     if (value !== cardStates.BACK && value !== cardStates.FACE) {
@@ -11,7 +13,7 @@ function Card() {
     }
 
     state = value;
-  }
+  };
 
   this.flip = function () {
     if (state === cardStates.FACE) {
