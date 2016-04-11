@@ -1,7 +1,13 @@
 import cardStates from './cardStates.js';
+import HasId from './HasId';
 
 const DEFAULT_OPTIONS = {
     id: undefined,
+
+    /**
+     * Each picture on the card has pair in the game.
+     * This field stores an id of pair (the second card of the pair will have same id)
+     */
     pairId: undefined
 };
 
@@ -9,35 +15,43 @@ function Card(options) {
     options = options || {};
     options = Object.assign(DEFAULT_OPTIONS, options);
 
-    var state = cardStates.BACK;
-    var id = options.id;
+    var privateState = cardStates.BACK;
 
-    /**
-     * Each picture on the card has pair in the game.
-     * This field stores an id of pair (the second card of the pair will have same id)
-     */
-    var pairId = options.pairId;
-
-    this.getState = () => state;
-    this.getId = () => id;
-    this.getPairId = () => pairId;
-
-    this.setState = function (value) {
+    function setState(value) {
         if (value !== cardStates.BACK && value !== cardStates.FACE) {
             throw new Error(`Unexpected state ${value}`);
         }
 
-        state = value;
-    };
+        privateState = value;
+    }
 
-    this.flip = function () {
-        if (state === cardStates.FACE) {
-            state = cardStates.BACK;
+    function flip() {
+        if (privateState === cardStates.FACE) {
+            setState(cardStates.BACK);
         }
-        else if (state === cardStates.BACK) {
-            state = cardStates.FACE;
+        else if (privateState === cardStates.BACK) {
+            setState(cardStates.FACE);
         }
-    };
+    }
+
+    return Object.assign(
+        {},
+        HasId({
+            id: options.id
+        }),
+        {
+            get state() {
+                return privateState;
+            },
+            set state(value) {
+                return setState(value);
+            },
+            get pairId() {
+                return options.pairId;
+            },
+            flip
+        }
+    );
 }
 
 export default Card;

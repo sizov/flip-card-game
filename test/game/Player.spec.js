@@ -6,5 +6,23 @@ test("Player should have empty collection of paired cards", (t) => {
 
     var player = new Player();
 
-    t.equal(player.getParedCards().length, 0);
+    t.equal(player.pairedCards.length, 0);
+});
+
+test("Player id", (t) => {
+    t.plan(1);
+
+    var player = new Player();
+
+    t.equal(player.id, undefined);
+});
+
+test("Player id non-default", (t) => {
+    t.plan(1);
+
+    var player = new Player({
+        id: 5
+    });
+
+    t.equal(player.id, 5);
 });
