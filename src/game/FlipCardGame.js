@@ -49,6 +49,14 @@ function FlipCardGame(options) {
         return cards;
     }
 
+    this.flip = function (options) {
+        var cardIdToFlip,
+            playerId;
+
+
+
+    };
+
 }
 
 export default FlipCardGame;
