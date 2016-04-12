@@ -12,6 +12,7 @@ function generate(amount) {
             id: i,
             pairId: pairId
         }));
+
         if (pairId % 2 !== 0) {
             pairId = pairId + 1;
         }

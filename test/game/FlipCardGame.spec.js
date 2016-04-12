@@ -8,7 +8,7 @@ test("FlipCardGame game state, has to have cards array of predefined length", (t
 
     var game = new FlipCardGame();
 
-    t.equal(game.cards.length, 10);
+    t.equal(game.getCards().length, 10);
 });
 
 test("FlipCardGame game state, has to have cards array of predefined length", (t) => {
@@ -18,7 +18,7 @@ test("FlipCardGame game state, has to have cards array of predefined length", (t
         cardsAmount: 20
     });
 
-    t.equal(game.cards.length, 20);
+    t.equal(game.getCards().length, 20);
 });
 
 test("FlipCardGame game state, has to have empty players array", (t) => {
@@ -26,7 +26,7 @@ test("FlipCardGame game state, has to have empty players array", (t) => {
 
     var game = new FlipCardGame();
 
-    t.equal(game.players.length, 0);
+    t.equal(game.getPlayers().length, 0);
 });
 
 test("FlipCardGame game state, has to have empty current player array", (t) => {
@@ -34,7 +34,7 @@ test("FlipCardGame game state, has to have empty current player array", (t) => {
 
     var game = new FlipCardGame();
 
-    t.equal(game.currentPlayer, undefined);
+    t.equal(game.getCurrentPlayer(), undefined);
 });
 
 test("FlipCardGame game state, has to be in new state on start", (t) => {
@@ -42,5 +42,5 @@ test("FlipCardGame game state, has to be in new state on start", (t) => {
 
     var game = new FlipCardGame();
 
-    t.equal(game.state, gameStates.NEW);
+    t.equal(game.getState(), gameStates.NEW);
 });

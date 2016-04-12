@@ -14,7 +14,7 @@ test("Player id", (t) => {
 
     var player = new Player();
 
-    t.equal(player.id, undefined);
+    t.equal(player.getId(), undefined);
 });
 
 test("Player id non-default", (t) => {
@@ -24,5 +24,5 @@ test("Player id non-default", (t) => {
         id: 5
     });
 
-    t.equal(player.id, 5);
+    t.equal(player.getId(), 5);
 });

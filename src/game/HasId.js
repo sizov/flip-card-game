@@ -1,5 +1,5 @@
 export default (state) => ({
-    get id() {
+    getId() {
         return state.id;
     }
 });

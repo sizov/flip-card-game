@@ -7,7 +7,7 @@ test("Card state", (t) => {
 
     var card = new Card();
 
-    t.equal(card.state, cardStates.BACK);
+    t.equal(card.getState(), cardStates.BACK);
 });
 
 test("Card id", (t) => {
@@ -15,7 +15,7 @@ test("Card id", (t) => {
 
     var card = new Card();
 
-    t.equal(card.id, undefined);
+    t.equal(card.getId(), undefined);
 });
 
 test("Card id non-default", (t) => {
@@ -25,7 +25,7 @@ test("Card id non-default", (t) => {
         id: 5
     });
 
-    t.equal(card.id, 5);
+    t.equal(card.getId(), 5);
 });
 
 test("Card pairId", (t) => {
@@ -33,7 +33,7 @@ test("Card pairId", (t) => {
 
     var card = new Card();
 
-    t.equal(card.pairId, undefined);
+    t.equal(card.getPairId(), undefined);
 });
 
 test("Card pairId non-default", (t) => {
@@ -44,7 +44,7 @@ test("Card pairId non-default", (t) => {
         pairId: 7
     });
 
-    t.equal(card.pairId, 7);
+    t.equal(card.getPairId(), 7);
 });
 
 test("Card set state", (t) => {
@@ -52,21 +52,23 @@ test("Card set state", (t) => {
 
     var card = new Card();
 
-    card.state = cardStates.FACE;
+    card.setState(cardStates.FACE);
 
-    t.equal(card.state, cardStates.FACE);
+    t.equal(card.getState(), cardStates.FACE);
 });
 
-test.only("Card flip", (t) => {
-    t.plan(2);
+test("Card flip", (t) => {
+    t.plan(3);
 
     var card = Card();
 
-    t.equal(card.state, cardStates.BACK);
+    t.equal(card.getState(), cardStates.BACK);
+
     card.flip();
 
-    t.equal(card.state, cardStates.FACE);
+    t.equal(card.getState(), cardStates.FACE);
 
-    //card.flip();
-    //t.equal(card.state, cardStates.BACK);
+    card.flip();
+
+    t.equal(card.getState(), cardStates.BACK);
 });

@@ -2,6 +2,8 @@ import cardStates from './cardStates.js';
 import HasId from './HasId';
 
 const DEFAULT_OPTIONS = {
+    state: cardStates.BACK,
+
     id: undefined,
 
     /**
@@ -12,24 +14,24 @@ const DEFAULT_OPTIONS = {
 };
 
 function Card(options) {
-    options = options || {};
-    options = Object.assign(DEFAULT_OPTIONS, options);
+    options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-    var privateState = cardStates.BACK;
+    var getState = () => options.state;
+    var getPairId = () => options.pairId;
 
     function setState(value) {
         if (value !== cardStates.BACK && value !== cardStates.FACE) {
             throw new Error(`Unexpected state ${value}`);
         }
 
-        privateState = value;
+        options.state = value;
     }
 
     function flip() {
-        if (privateState === cardStates.FACE) {
+        if (options.state === cardStates.FACE) {
             setState(cardStates.BACK);
         }
-        else if (privateState === cardStates.BACK) {
+        else if (options.state === cardStates.BACK) {
             setState(cardStates.FACE);
         }
     }
@@ -40,15 +42,9 @@ function Card(options) {
             id: options.id
         }),
         {
-            get state() {
-                return privateState;
-            },
-            set state(value) {
-                return setState(value);
-            },
-            get pairId() {
-                return options.pairId;
-            },
+            getState,
+            setState,
+            getPairId,
             flip
         }
     );

@@ -26,6 +26,11 @@ function FlipCardGame(options) {
      */
     var currentPlayer;
 
+    const getPlayers = () => players;
+    const getCards = () => cards;
+    const getCurrentPlayer = () => currentPlayer;
+    const getState = () => state;
+
     function flip(options) {
         var cardIdToFlip,
             playerId;
@@ -37,18 +42,10 @@ function FlipCardGame(options) {
     return Object.assign(
         {},
         {
-            get state() {
-                return state;
-            },
-            get cards() {
-                return cards;
-            },
-            get players() {
-                return players;
-            },
-            get currentPlayer() {
-                return currentPlayer;
-            },
+            getState,
+            getCards,
+            getPlayers,
+            getCurrentPlayer,
             flip
         },
         eventEmitter
