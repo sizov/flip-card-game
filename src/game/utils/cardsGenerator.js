@@ -7,6 +7,7 @@ function generate(amount) {
 
     var cards = [],
         pairId = 0;
+
     for (var i = 0; i < amount; i++) {
         cards.push(new Card({
             id: i,
