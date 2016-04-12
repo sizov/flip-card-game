@@ -47,7 +47,7 @@ test("Card pairId non-default", (t) => {
     t.equal(card.getPairId(), 7);
 });
 
-test("Card setState", (t) => {
+test("Card set state", (t) => {
     t.plan(1);
 
     var card = new Card();
@@ -60,11 +60,15 @@ test("Card setState", (t) => {
 test("Card flip", (t) => {
     t.plan(3);
 
-    var card = new Card();
+    var card = Card();
 
     t.equal(card.getState(), cardStates.BACK);
+
     card.flip();
+
     t.equal(card.getState(), cardStates.FACE);
+
     card.flip();
+
     t.equal(card.getState(), cardStates.BACK);
 });

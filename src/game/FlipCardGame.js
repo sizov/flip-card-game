@@ -1,6 +1,8 @@
 import gameStates from "./gameStates";
 import Player from "./Player";
 import Card from "./Card";
+import cardGenerator from "./utils/cardGenerator";
+import EventEmitter from 'wolfy87-eventemitter';
 
 const DEFAULT_OPTIONS = {
     playersAmount: 2,
@@ -11,7 +13,7 @@ function FlipCardGame(options) {
     options = options || {};
     options = Object.assign(DEFAULT_OPTIONS, options);
 
-    const cards = generateCards(options.cardsAmount);
+    const cards = cardGenerator.generate(options.cardsAmount);
     const players = [];
 
     /**
@@ -24,38 +26,30 @@ function FlipCardGame(options) {
      */
     var currentPlayer;
 
-    this.getState = () => state;
-    this.getCards = () => cards;
-    this.getCurrentPlayer = () => currentPlayer;
-    this.getPlayers = () => players;
+    const getPlayers = () => players;
+    const getCards = () => cards;
+    const getCurrentPlayer = () => currentPlayer;
+    const getState = () => state;
 
-    function generateCards(amount) {
-        if (amount < 0) {
-            throw new Error('Amount should not be less than zero');
-        }
-
-        var cards = [],
-            pairId = 0;
-        for (var i = 0; i < amount; i++) {
-            cards.push(new Card({
-                id: i,
-                pairId: pairId
-            }));
-            if (pairId % 2 !== 0) {
-                pairId = pairId + 1;
-            }
-        }
-
-        return cards;
-    }
-
-    this.flip = function (options) {
+    function flip(options) {
         var cardIdToFlip,
             playerId;
 
+    }
 
+    const eventEmitter = new EventEmitter();
 
-    };
+    return Object.assign(
+        {},
+        {
+            getState,
+            getCards,
+            getPlayers,
+            getCurrentPlayer,
+            flip
+        },
+        eventEmitter
+    );
 
 }
 
