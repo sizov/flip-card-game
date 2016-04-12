@@ -1,7 +1,7 @@
 import test from "tape";
 import FlipCardGame from "../../src/game/FlipCardGame";
-import cardStates from "../../src/game/cardStates";
-import gameStates from "../../src/game/gameStates";
+import cardStates from "../../src/game/constants/cardStates";
+import gameStates from "../../src/game/constants/gameStates";
 
 test("FlipCardGame game state, has to have cards array of predefined length", (t) => {
     t.plan(1);
@@ -21,12 +21,12 @@ test("FlipCardGame game state, has to have cards array of predefined length", (t
     t.equal(game.getCards().length, 20);
 });
 
-test("FlipCardGame game state, has to have empty players array", (t) => {
+test("FlipCardGame game state, has to have default 2 players", (t) => {
     t.plan(1);
 
     var game = new FlipCardGame();
 
-    t.equal(game.getPlayers().length, 0);
+    t.equal(game.getPlayers().length, 2);
 });
 
 test("FlipCardGame game state, has to have empty current player array", (t) => {

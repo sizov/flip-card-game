@@ -1,10 +1,10 @@
-import cardStates from './cardStates.js';
-import HasId from './HasId';
+import cardStates from './constants/cardStates.js';
+import HasId from './partials/HasId';
 
 const DEFAULT_OPTIONS = {
-    state: cardStates.BACK,
-
     id: undefined,
+
+    state: cardStates.BACK,
 
     /**
      * Each picture on the card has pair in the game.
@@ -16,8 +16,8 @@ const DEFAULT_OPTIONS = {
 function Card(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-    var getState = () => options.state;
-    var getPairId = () => options.pairId;
+    const getState = () => options.state;
+    const getPairId = () => options.pairId;
 
     function setState(value) {
         if (value !== cardStates.BACK && value !== cardStates.FACE) {
@@ -38,9 +38,7 @@ function Card(options) {
 
     return Object.assign(
         {},
-        HasId({
-            id: options.id
-        }),
+        HasId({id: options.id}),
         {
             getState,
             setState,

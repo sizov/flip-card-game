@@ -1,7 +1,8 @@
-import gameStates from "./gameStates";
+import gameStates from "./constants/gameStates";
 import Player from "./Player";
 import Card from "./Card";
-import cardGenerator from "./utils/cardGenerator";
+import cardsGenerator from "./utils/cardsGenerator";
+import playersGenerator from "./utils/playersGenerator";
 import EventEmitter from 'wolfy87-eventemitter';
 
 const DEFAULT_OPTIONS = {
@@ -13,8 +14,8 @@ function FlipCardGame(options) {
     options = options || {};
     options = Object.assign(DEFAULT_OPTIONS, options);
 
-    const cards = cardGenerator.generate(options.cardsAmount);
-    const players = [];
+    const cards = cardsGenerator.generate(options.cardsAmount);
+    const players = playersGenerator.generate(options.playersAmount);
 
     /**
      * State of the game - is it new game, in process or finished
