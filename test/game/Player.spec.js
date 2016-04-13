@@ -13,18 +13,8 @@ test("Player id non-default", (t) => {
     t.plan(1);
 
     var player = new Player({
-        id: 5
+        id: '5'
     });
 
-    t.equal(player.getId(), 5);
-});
-
-test("Player cards collection should be empty by default", (t) => {
-    t.plan(1);
-
-    var player = new Player({
-        id: 5
-    });
-
-    t.equal(player.getPairedCards().length, 0);
+    t.equal(player.getId(), '5');
 });

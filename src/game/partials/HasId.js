@@ -1,5 +1,4 @@
+import idGenerator from '../utils/idGenerator';
 export default (state) => ({
-    getId() {
-        return state.id;
-    }
+    getId: () => state.id
 });

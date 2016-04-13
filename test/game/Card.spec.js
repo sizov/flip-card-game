@@ -22,10 +22,10 @@ test("Card id non-default", (t) => {
     t.plan(1);
 
     var card = new Card({
-        id: 5
+        id: '5'
     });
 
-    t.equal(card.getId(), 5);
+    t.equal(card.getId(), '5');
 });
 
 test("Card pairId", (t) => {
@@ -40,11 +40,11 @@ test("Card pairId non-default", (t) => {
     t.plan(1);
 
     var card = new Card({
-        id: 5,
-        pairId: 7
+        id: '5',
+        pairId: '7'
     });
 
-    t.equal(card.getPairId(), 7);
+    t.equal(card.getPairId(), '7');
 });
 
 test("Card set state", (t) => {

@@ -22,7 +22,7 @@ test("FlipCardGame flip should change the state of cards", (t) => {
     t.equal(game.getCards()[0].getState(), cardStates.FACE);
 });
 
-test.only("FlipCardGame flip should change the state of cards", (t) => {
+test("FlipCardGame flip should change the state of cards", (t) => {
     t.plan(1);
 
     var game = new FlipCardGame();
@@ -41,4 +41,30 @@ test.only("FlipCardGame flip should change the state of cards", (t) => {
     t.equal(game.getCards()[3].getState(), cardStates.FACE);
 });
 
-//test when flipped already flipped card - exception
+test("FlipCardGame flip should throw if card to flip ID does not exist", (t) => {
+    t.plan(1);
+
+    var game = new FlipCardGame();
+
+    function tryFlip() {
+        game.flipCard({
+            cardId: '999'
+        })
+    }
+
+    t.throws(tryFlip);
+});
+
+test("FlipCardGame flip should throw if player to flip ID does not exist", (t) => {
+    t.plan(1);
+
+    var game = new FlipCardGame();
+
+    function tryFlip() {
+        game.flipCard({
+            playerId: '999'
+        })
+    }
+
+    t.throws(tryFlip);
+});
