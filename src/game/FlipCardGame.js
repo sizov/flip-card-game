@@ -11,6 +11,7 @@ const DEFAULT_OPTIONS = {
     cardsAmount: 10
 };
 
+//TODO: add events - move, game over
 function FlipCardGame(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
 
@@ -37,7 +38,7 @@ function FlipCardGame(options) {
 
     const cardsById = {};
     const playersById = {};
-    const cardsFlippedByPlayer = new Map();
+    const cardsFlippedByPlayers = new Map();
 
     cards.forEach(function (card) {
         cardsById[card.getId()] = card;
@@ -45,8 +46,15 @@ function FlipCardGame(options) {
 
     players.forEach(function (player) {
         playersById[player.getId()] = player;
-        cardsFlippedByPlayer[player] = [];
+        cardsFlippedByPlayers[player] = [];
     });
+
+    /**
+     * Gets next valid player for the move
+     */
+    function getNextValidPlayer(cardsFlippedByPlayer) {
+
+    }
 
     function getPlayer(options) {
         options = options || {};
@@ -67,7 +75,7 @@ function FlipCardGame(options) {
             return player;
         }
 
-        //TODO: get next possible player if one is not provided
+        return getNextValidPlayer();
     }
 
     function getCard(options) {
@@ -91,6 +99,15 @@ function FlipCardGame(options) {
     }
 
     /**
+     * Checks if this player can move now
+     * @param player
+     */
+    function isValidPlayerToDoFlip(player, cardsFlippedByPlayer) {
+        //TODO: make sure that this player has not flipped more than 2 cards than others players
+        return true;
+    }
+
+    /**
      * Method to make a move by player. This method changes the state of game by flipping a card.
      * @param options
      */
@@ -98,39 +115,36 @@ function FlipCardGame(options) {
         options = options || {};
 
         const card = getCard(options);
-        const player = getPlayer(options);
-
-        if (!card) {
-            throw new Error('Error finding target card');
-        }
-
-        if (!player) {
-            throw new Error('Error finding target player');
-        }
-
         if (card.getState() === cardStates.FACE) {
-            throw new Error(`Error flipping card ${card.id} as it is flipped already`);
+            throw new Error(`Error flipping card ${card.getId()} as it is flipped already`);
+        }
+
+        const player = getPlayer(options);
+        if (!isValidPlayerToDoFlip(player, cardsFlippedByPlayers)) {
+            throw new Error(`Player ${player.getId()} can't flip cards now`);
         }
 
         currentPlayer = player;
         card.flip();
-        cardsFlippedByPlayer[player].push(card);
+        cardsFlippedByPlayers[player].push(card);
 
         //TODO: control the amount of moves - only two moves per player
     }
 
     const eventEmitter = new EventEmitter();
 
+    console.log(eventEmitter.on);
+
     return Object.assign(
         {},
+        eventEmitter, //FIXME: Objectassign does not copy prototype methods
         {
             getState,
             getCards,
             getPlayers,
             getCurrentPlayer,
             flipCard
-        },
-        eventEmitter
+        }
     );
 
 }
