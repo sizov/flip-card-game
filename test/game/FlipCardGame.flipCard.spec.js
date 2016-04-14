@@ -23,7 +23,7 @@ test("FlipCardGame flip should change the state of cards", (t) => {
     t.equal(game.getCards()[0].getState(), cardStates.FACE);
 });
 
-test.only("FlipCardGame flip should change the state of cards, event fired", (t) => {
+test("FlipCardGame flip should change the state of cards, event fired", (t) => {
     t.plan(2);
 
     var game = new FlipCardGame();

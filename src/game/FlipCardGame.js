@@ -16,26 +16,30 @@ const DEFAULT_OPTIONS = {
 function FlipCardGame(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
 
+    const eventEmitter = new EventEmitter();
+    this.on = eventEmitter.on.bind(eventEmitter);
+    this.emit = eventEmitter.emit.bind(eventEmitter);
+
     /**
      * State of the game - is it new game, in process or finished
      */
     var state = gameStates.NEW;
-    const getState = () => state;
+    this.getState = () => state;
 
     /**
      * Player who turns cards now
      */
     var currentPlayer;
-    const getCurrentPlayer = () => currentPlayer;
+    this.getCurrentPlayer = () => currentPlayer;
 
     /**
      * Players that play the game
      */
     const players = playersGenerator.generate(options.playersAmount);
-    const getPlayers = () => players;
+    this.getPlayers = () => players;
 
     const cards = cardsGenerator.generate(options.cardsAmount);
-    const getCards = () => cards;
+    this.getCards = () => cards;
 
     const cardsById = {};
     const playersById = {};
@@ -112,7 +116,7 @@ function FlipCardGame(options) {
      * Method to make a move by player. This method changes the state of game by flipping a card.
      * @param options
      */
-    function flipCard(options) {
+    this.flipCard = function (options) {
         options = options || {};
 
         const card = getCard(options);
@@ -137,18 +141,6 @@ function FlipCardGame(options) {
         //TODO: control the amount of moves - only two moves per player
     }
 
-    const eventEmitter = new EventEmitter();
-
-    return Object.assign(
-        eventEmitter,//TODO: consider using proper prototype inheritence?
-        {
-            getState,
-            getCards,
-            getPlayers,
-            getCurrentPlayer,
-            flipCard
-        }
-    );
 }
 
 export default FlipCardGame;
