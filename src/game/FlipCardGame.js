@@ -5,6 +5,7 @@ import Card from "./Card";
 import cardsGenerator from "./utils/cardsGenerator";
 import playersGenerator from "./utils/playersGenerator";
 import EventEmitter from 'wolfy87-eventemitter';
+import gameEvents from "../../src/game/constants/gameEvents";
 
 const DEFAULT_OPTIONS = {
     playersAmount: 2,
@@ -128,13 +129,18 @@ function FlipCardGame(options) {
         card.flip();
         cardsFlippedByPlayers[player].push(card);
 
+        eventEmitter.emit(gameEvents.FLIP, {
+            card: card,
+            player: player
+        });
+
         //TODO: control the amount of moves - only two moves per player
     }
 
     const eventEmitter = new EventEmitter();
 
     return Object.assign(
-        Object.create(eventEmitter),//TODO: consider doing proper prototype inheritence
+        eventEmitter,//TODO: consider using proper prototype inheritence?
         {
             getState,
             getCards,
@@ -143,7 +149,6 @@ function FlipCardGame(options) {
             flipCard
         }
     );
-
 }
 
 export default FlipCardGame;

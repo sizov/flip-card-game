@@ -34,10 +34,6 @@ test.only("FlipCardGame flip should change the state of cards, event fired", (t)
     const cards = game.getCards();
     const card0 = cards[0];
 
-    console.log(game.on);
-    console.log(game.addListener);
-    console.log(game.flipCard);
-
     game.on(gameEvents.FLIP, function (event) {
         t.equal(event.card.getState(), cardStates.FACE);
         t.equal(event.card.getId(), card0.getId());
