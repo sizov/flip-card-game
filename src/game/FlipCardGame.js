@@ -133,11 +133,8 @@ function FlipCardGame(options) {
 
     const eventEmitter = new EventEmitter();
 
-    console.log(eventEmitter.on);
-
     return Object.assign(
-        {},
-        eventEmitter, //FIXME: Objectassign does not copy prototype methods
+        Object.create(eventEmitter),//TODO: consider doing proper prototype inheritence
         {
             getState,
             getCards,
