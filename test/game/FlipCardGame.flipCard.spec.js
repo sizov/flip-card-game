@@ -113,7 +113,7 @@ test("FlipCardGame flip should throw if card to flip ID does not exist", (t) => 
     function tryFlip() {
         game.flipCard({
             cardId: '999'
-        })
+        });
     }
 
     t.throws(tryFlip);
@@ -127,7 +127,7 @@ test("FlipCardGame flip should throw if player to flip ID does not exist", (t) =
     function tryFlip() {
         game.flipCard({
             playerId: '999'
-        })
+        });
     }
 
     t.throws(tryFlip);

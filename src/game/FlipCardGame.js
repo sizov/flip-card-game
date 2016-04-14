@@ -1,11 +1,10 @@
 import gameStates from "./constants/gameStates";
-import cardStates from "./constants/cardStates";
-import Player from "./Player";
-import Card from "./Card";
+import gameEvents from "../../src/game/constants/gameEvents";
+import gameUtils from "../../src/game/utils/gameUtils";
 import cardsGenerator from "./utils/cardsGenerator";
 import playersGenerator from "./utils/playersGenerator";
+
 import EventEmitter from 'wolfy87-eventemitter';
-import gameEvents from "../../src/game/constants/gameEvents";
 
 const DEFAULT_OPTIONS = {
     playersAmount: 2,
@@ -36,14 +35,46 @@ function FlipCardGame(options) {
      * Players that play the game
      */
     const players = playersGenerator.generate(options.playersAmount);
+    const playersById = {};
     this.getPlayers = () => players;
 
+    /**
+     * All cards of the game
+     */
     const cards = cardsGenerator.generate(options.cardsAmount);
+    const cardsById = {};
+    const cardsFlippedByPlayers = new Map();
     this.getCards = () => cards;
 
-    const cardsById = {};
-    const playersById = {};
-    const cardsFlippedByPlayers = new Map();
+    /**
+     * Method to make a move by player. This method changes the state of game by flipping a card.
+     * @param options
+     */
+    this.flipCard = function (options) {
+        options = options || {};
+
+        const card = gameUtils.getCardToFlip({
+            cardId: options.cardId,
+            card: options.card,
+            cardsById
+        });
+        const player = gameUtils.getPlayerToFlipCard({
+            playerId: options.playerId,
+            player: options.player,
+            currentPlayer,
+            playersById,
+            cardsFlippedByPlayers
+        });
+
+        currentPlayer = player;
+        card.flip();
+        cardsFlippedByPlayers[player].push(card);
+
+        eventEmitter.emit(gameEvents.FLIP, {
+            card,
+            player
+        });
+    };
 
     cards.forEach(function (card) {
         cardsById[card.getId()] = card;
@@ -53,93 +84,6 @@ function FlipCardGame(options) {
         playersById[player.getId()] = player;
         cardsFlippedByPlayers[player] = [];
     });
-
-    /**
-     * Gets next valid player for the move
-     */
-    function getNextValidPlayer(cardsFlippedByPlayer) {
-
-    }
-
-    function getPlayer(options) {
-        options = options || {};
-
-        if (options.player) {
-            const player = playersById[options.player.getId()];
-            if (typeof player === 'undefined') {
-                throw new Error('Provided player is not known');
-            }
-            return player;
-        }
-
-        if (options.playerId) {
-            const player = playersById[options.playerId];
-            if (typeof player === 'undefined') {
-                throw new Error('Provided player ID is not known');
-            }
-            return player;
-        }
-
-        return getNextValidPlayer();
-    }
-
-    function getCard(options) {
-        options = options || {};
-
-        if (options.card) {
-            const card = cardsById[options.card.getId()];
-            if (typeof card === 'undefined') {
-                throw new Error('Provided card is not known');
-            }
-            return card;
-        }
-
-        if (options.cardId) {
-            const card = cardsById[options.cardId];
-            if (typeof card === 'undefined') {
-                throw new Error('Provided card ID is not known');
-            }
-            return card;
-        }
-    }
-
-    /**
-     * Checks if this player can move now
-     * @param player
-     */
-    function isValidPlayerToDoFlip(player, cardsFlippedByPlayer) {
-        //TODO: make sure that this player has not flipped more than 2 cards than others players
-        return true;
-    }
-
-    /**
-     * Method to make a move by player. This method changes the state of game by flipping a card.
-     * @param options
-     */
-    this.flipCard = function (options) {
-        options = options || {};
-
-        const card = getCard(options);
-        if (card.getState() === cardStates.FACE) {
-            throw new Error(`Error flipping card ${card.getId()} as it is flipped already`);
-        }
-
-        const player = getPlayer(options);
-        if (!isValidPlayerToDoFlip(player, cardsFlippedByPlayers)) {
-            throw new Error(`Player ${player.getId()} can't flip cards now`);
-        }
-
-        currentPlayer = player;
-        card.flip();
-        cardsFlippedByPlayers[player].push(card);
-
-        eventEmitter.emit(gameEvents.FLIP, {
-            card: card,
-            player: player
-        });
-
-        //TODO: control the amount of moves - only two moves per player
-    }
 
 }
 

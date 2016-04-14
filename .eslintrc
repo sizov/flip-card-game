@@ -1,13 +1,11 @@
 {
-  "parser": "babel-eslint",
-  "env": {
-    "node": true,
-    "es6": true
-  },
-  "rules": {
-    "semi": [
-      "warn",
-      "always"
-    ]
-  }
+    "parser": "babel-eslint",
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "rules": {
+        "no-unused-vars": "warn",
+        "semi": "warn"
+    }
 }
