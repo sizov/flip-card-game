@@ -1,6 +1,6 @@
 import test from "tape";
-import Card from "../../src/game/Card";
-import cardStates from "../../src/game/constants/cardStates";
+import Card from "../src/Card";
+import cardStates from "../src/constants/cardStates";
 
 test("Card state", (t) => {
     t.plan(1);

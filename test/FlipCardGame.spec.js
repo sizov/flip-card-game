@@ -1,7 +1,7 @@
 import test from "tape";
-import FlipCardGame from "../../src/game/FlipCardGame";
-import cardStates from "../../src/game/constants/cardStates";
-import gameStates from "../../src/game/constants/gameStates";
+import FlipCardGame from "../src/FlipCardGame";
+import cardStates from "../src/constants/cardStates";
+import gameStates from "../src/constants/gameStates";
 
 test("FlipCardGame game state, has to have cards array of predefined length", (t) => {
     t.plan(1);

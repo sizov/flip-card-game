@@ -1,6 +1,6 @@
 import gameStates from "./constants/gameStates";
-import gameEvents from "../../src/game/constants/gameEvents";
-import gameUtils from "../../src/game/utils/gameUtils";
+import gameEvents from "./constants/gameEvents";
+import gameUtils from "./utils/gameUtils";
 import cardsGenerator from "./utils/cardsGenerator";
 import playersGenerator from "./utils/playersGenerator";
 
@@ -22,6 +22,7 @@ function FlipCardGame(options) {
     /**
      * State of the game - is it new game, in process or finished
      */
+    //TODO: can we make this as getter on utils calculation function?
     var state = gameStates.NEW;
     this.getState = () => state;
 
@@ -35,16 +36,19 @@ function FlipCardGame(options) {
      * Players that play the game
      */
     const players = playersGenerator.generate(options.playersAmount);
-    const playersById = {};
     this.getPlayers = () => players;
+
 
     /**
      * All cards of the game
      */
     const cards = cardsGenerator.generate(options.cardsAmount);
-    const cardsById = {};
-    const cardsFlippedByPlayers = new Map();
     this.getCards = () => cards;
+
+    const cardsById = new Map();
+    const cardPairsFoundByPlayers = new Map();
+    const cardsFlippedByPlayers = new Map();
+    const playersById = new Map();
 
     /**
      * Method to make a move by player. This method changes the state of game by flipping a card.
@@ -58,31 +62,48 @@ function FlipCardGame(options) {
             card: options.card,
             cardsById
         });
+
         const player = gameUtils.getPlayerToFlipCard({
             playerId: options.playerId,
             player: options.player,
             currentPlayer,
             playersById,
-            cardsFlippedByPlayers
+            cardPairsFoundByPlayers
         });
 
         currentPlayer = player;
         card.flip();
-        cardsFlippedByPlayers[player].push(card);
 
-        eventEmitter.emit(gameEvents.FLIP, {
-            card,
-            player
-        });
+        cardsFlippedByPlayers.get(player).push(card);
+
+        //TODO: dispatch event if pair found
+        if (true) {
+            cardPairsFoundByPlayers.get(player).push(card);
+        }
+
+        eventEmitter.emit(gameEvents.CARD_FLIP_EVENT, {card, player});
+
+        //TODO: if it's player second card, check if it's pair, if yes - move them to play count otherwise, flip back
+        var currentGameState = gameUtils.getGameState({cards, cardsFlippedByPlayers, cardPairsFoundByPlayers});
+        if (currentGameState === gameStates.OVER) {
+            eventEmitter.emit(gameEvents.GAME_OVER_EVENT, {
+                winnerPlayer: gameUtils.getWinningPlayer({players})
+            });
+        }
+
+        else if (currentGameState === gameStates.DRAW) {
+            eventEmitter.emit(gameEvents.GAME_DRAW_EVENT);
+        }
     };
 
     cards.forEach(function (card) {
-        cardsById[card.getId()] = card;
+        cardsById.set(card.getId(), card);
     });
 
     players.forEach(function (player) {
-        playersById[player.getId()] = player;
-        cardsFlippedByPlayers[player] = [];
+        playersById.set(player.getId(), player);
+        cardPairsFoundByPlayers.set(player, []);
+        cardsFlippedByPlayers.set(player, []);
     });
 
 }

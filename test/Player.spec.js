@@ -1,5 +1,5 @@
 import test from "tape";
-import Player from "../../src/game/Player";
+import Player from "../src/Player";
 
 test("Player id", (t) => {
     t.plan(1);

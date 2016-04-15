@@ -1,8 +1,8 @@
 import test from "tape";
-import FlipCardGame from "../../src/game/FlipCardGame";
-import cardStates from "../../src/game/constants/cardStates";
-import gameStates from "../../src/game/constants/gameStates";
-import gameEvents from "../../src/game/constants/gameEvents";
+import FlipCardGame from "../src/FlipCardGame";
+import cardStates from "../src/constants/cardStates";
+import gameStates from "../src/constants/gameStates";
+import gameEvents from "../src/constants/gameEvents";
 
 test("FlipCardGame flip should change the state of cards", (t) => {
     t.plan(1);
@@ -34,7 +34,7 @@ test("FlipCardGame flip should change the state of cards, event fired", (t) => {
     const cards = game.getCards();
     const card0 = cards[0];
 
-    game.on(gameEvents.FLIP, function (event) {
+    game.on(gameEvents.CARD_FLIP_EVENT, function (event) {
         t.equal(event.card.getState(), cardStates.FACE);
         t.equal(event.card.getId(), card0.getId());
     });
