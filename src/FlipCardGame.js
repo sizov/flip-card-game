@@ -33,11 +33,15 @@ function FlipCardGame(options) {
     this.getCurrentPlayer = () => currentPlayer;
 
     /**
+     * Pair of cards that is currently flipped by player
+     */
+    var currentFlippedPair;
+
+    /**
      * Players that play the game
      */
     const players = playersGenerator.generate(options.playersAmount);
     this.getPlayers = () => players;
-
 
     /**
      * All cards of the game
@@ -45,10 +49,8 @@ function FlipCardGame(options) {
     const cards = cardsGenerator.generate(options.cardsAmount);
     this.getCards = () => cards;
 
-    const cardsById = new Map();
     const cardPairsFoundByPlayers = new Map();
     const cardsFlippedByPlayers = new Map();
-    const playersById = new Map();
 
     /**
      * Method to make a move by player. This method changes the state of game by flipping a card.
@@ -60,15 +62,14 @@ function FlipCardGame(options) {
         const card = gameUtils.getCardToFlip({
             cardId: options.cardId,
             card: options.card,
-            cardsById
+            cards
         });
-
         const player = gameUtils.getPlayerToFlipCard({
             playerId: options.playerId,
             player: options.player,
             currentPlayer,
-            playersById,
-            cardPairsFoundByPlayers
+            players,
+            cardsFlippedByPlayers
         });
 
         currentPlayer = player;
@@ -96,12 +97,7 @@ function FlipCardGame(options) {
         }
     };
 
-    cards.forEach(function (card) {
-        cardsById.set(card.getId(), card);
-    });
-
     players.forEach(function (player) {
-        playersById.set(player.getId(), player);
         cardPairsFoundByPlayers.set(player, []);
         cardsFlippedByPlayers.set(player, []);
     });

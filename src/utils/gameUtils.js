@@ -21,38 +21,21 @@ function isValidPlayerToDoFlip(player, cardsFlippedByPlayer) {
     return true;
 }
 
-function getPlayerFromOptions(options) {
-    if (options.player) {
-        const player = options.playersById.get(options.player.getId());
-        if (!player) {
-            throw new Error('Provided player is not known');
-        }
-        return player;
+function getObjectByOptions(options) {
+    var searchedId;
+    if (options.object) {
+        searchedId = options.object.getId();
     }
-    else if (options.playerId) {
-        const player = options.playersById.get(options.playerId);
-        if (!player) {
-            throw new Error('Provided player ID is not known');
-        }
-        return player;
+    else if (options.id) {
+        searchedId = options.id;
     }
-}
 
-function getCardFromOptions(options) {
-    if (options.card) {
-        const card = options.cardsById.get(options.card.getId());
-        if (!card) {
-            throw new Error('Provided card is not known');
-        }
-        return card;
+    var foundObjects = options.objects.filter((object)=>object.getId() === searchedId);
+    if (foundObjects.length === 0) {
+        throw new Error(`Error finding object with id ${searchedId}`);
     }
-    else if (options.cardId) {
-        const card = options.cardsById.get(options.cardId);
-        if (!card) {
-            throw new Error('Provided card ID is not known');
-        }
-        return card;
-    }
+
+    return foundObjects[0];
 }
 
 function getPlayerToFlipCard(options) {
@@ -60,15 +43,23 @@ function getPlayerToFlipCard(options) {
 
     //TODO: control the amount of moves - only two moves per player
 
-    var player = getPlayerFromOptions(options);
-    if (player) {
-        if (!isValidPlayerToDoFlip(player, options.cardsFlippedByPlayers)) {
-            throw new Error(`Player ${player.getId()} can't flip cards now`);
-        }
-        return player;
+    var player;
+
+    if (options.player || options.playerId) {
+        player = getObjectByOptions({
+            id: options.playerId,
+            object: options.player,
+            objects: options.players
+        });
+    }
+    else {
+        player = getNextValidPlayer(options.cardsFlippedByPlayers);
     }
 
-    player = getNextValidPlayer(options.cardsFlippedByPlayers);
+    if (!isValidPlayerToDoFlip(player, options.cardsFlippedByPlayers)) {
+        throw new Error(`Player ${player.getId()} can't flip cards now`);
+    }
+
     if (!player) {
         throw new Error('Error finding next valid player');
     }
@@ -79,18 +70,27 @@ function getPlayerToFlipCard(options) {
 function getCardToFlip(options) {
     options = options || {};
 
-    var card = getCardFromOptions(options);
-    if (card) {
-        if (card.getState() === cardStates.FACE) {
-            throw new Error(`Error flipping card ${card.getId()} as it is flipped already`);
-        }
-        return card;
+    var card;
+    if (options.card || options.cardId) {
+        card = getObjectByOptions({
+            id: options.cardId,
+            object: options.card,
+            objects: options.cards
+        });
+    }
+    else {
+        card = getNextRandomCard();
     }
 
-    card = getNextRandomCard();
     if (!card) {
         throw new Error('Error finding next card to flip');
     }
+
+    if (card.getState() === cardStates.FACE) {
+        throw new Error(`Error flipping card ${card.getId()} as it is flipped already`);
+    }
+
+    return card;
 }
 
 /**
