@@ -88,6 +88,12 @@ function FlipCardGame(options) {
                     {cards: currentFlippedPair, player}
                 );
             }
+            else {
+                //we need to flip back cards if pair has not been found
+                currentFlippedPair[0].flip();
+                currentFlippedPair[1].flip();
+            }
+
             eventEmitter.emit(
                 gameEvents.PLAYER_FINISHED_FLIPPING_PAIR_EVENT,
                 {cards: currentFlippedPair, player}
@@ -97,11 +103,7 @@ function FlipCardGame(options) {
         }
 
         cardsFlippedByPlayers.get(player).push(card);
-
-        //TODO: dispatch event if pair found
-        if (true) {
-            cardPairsFoundByPlayers.get(player).push(card);
-        }
+        //cardPairsFoundByPlayers.get(player).push(card);
 
         eventEmitter.emit(gameEvents.CARD_FLIP_EVENT, {card, player});
 
