@@ -228,10 +228,12 @@ test("gameUtils should identify that there is draw when" +
     const pairsFoundByPlayers = new Map();
 
     pairsFoundByPlayers.set(players[0], [
-        [cards[0], cards[1]], [cards[2], cards[3]]
+        [cards[0], cards[1]],
+        [cards[2], cards[3]]
     ]);
     pairsFoundByPlayers.set(players[1], [
-        [cards[4], cards[5]], [cards[6], cards[7]]
+        [cards[4], cards[5]],
+        [cards[6], cards[7]]
     ]);
     pairsFoundByPlayers.set(players[2], [
         [cards[8], cards[9]]
@@ -281,10 +283,12 @@ test("gameUtils should identify that there is no winner yet when" +
     const pairsFoundByPlayers = new Map();
 
     pairsFoundByPlayers.set(players[0], [
-        [cards[0], cards[1]], [cards[2], cards[3]]
+        [cards[0], cards[1]],
+        [cards[2], cards[3]]
     ]);
     pairsFoundByPlayers.set(players[1], [
-        [cards[4], cards[5]], [cards[6], cards[7]]
+        [cards[4], cards[5]],
+        [cards[6], cards[7]]
     ]);
     pairsFoundByPlayers.set(players[2], []);
 
@@ -293,5 +297,57 @@ test("gameUtils should identify that there is no winner yet when" +
         pairsFoundByPlayers
     });
 
+    t.equal(winners.length, 0);
+});
+
+test("gameUtils should identify that there is no winner yet when" +
+    " game setup is: total pairs: 6; 3, 0, 2", (t) => {
+    t.plan(1);
+
+    const cards = cardsGenerator.generate(12);
+    const players = playersGenerator.generate(3);
+    const pairsFoundByPlayers = new Map();
+
+    pairsFoundByPlayers.set(players[0], [
+        [cards[0], cards[1]],
+        [cards[2], cards[3]],
+        [cards[4], cards[5]]
+    ]);
+    pairsFoundByPlayers.set(players[1], []);
+    pairsFoundByPlayers.set(players[2], [
+        [cards[8], cards[9]],
+        [cards[10], cards[11]]
+    ]);
+
+    const winners = gameUtils.getWinners({
+        cards,
+        pairsFoundByPlayers
+    });
+
+    t.equal(winners.length, 0);
+});
+
+test("gameUtils should identify that there is no winner yet when" +
+    " game setup is: total pairs: 4; 2, 0, 1", (t) => {
+    t.plan(1);
+
+    const cards = cardsGenerator.generate(8);
+    const players = playersGenerator.generate(3);
+    const pairsFoundByPlayers = new Map();
+
+    pairsFoundByPlayers.set(players[0], [
+        [cards[0], cards[1]],
+        [cards[2], cards[3]]
+    ]);
+    pairsFoundByPlayers.set(players[1], []);
+    pairsFoundByPlayers.set(players[2], [
+        [cards[4], cards[5]]
+    ]);
+
+    const winners = gameUtils.getWinners({
+        cards,
+        pairsFoundByPlayers
+    });
+    console.log(winners);
     t.equal(winners.length, 0);
 });

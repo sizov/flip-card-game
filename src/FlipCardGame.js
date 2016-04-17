@@ -58,9 +58,6 @@ function FlipCardGame(options) {
      * @param options
      */
     this.flipCard = function (options) {
-
-        console.log('=== flipCard', players.length, players[0] === players[1]);
-
         options = options || {};
 
         const card = gameUtils.getCardToFlip({
@@ -78,9 +75,6 @@ function FlipCardGame(options) {
         });
 
         currentPlayer = player;
-
-        console.log('currentPlayer === players[0]', currentPlayer === players[0], 'currentPlayer === players[1]', currentPlayer === players[1]);
-        console.log('options.player === players[0]', options.player === players[0], 'options.player === players[1]', options.player === players[1]);
 
         card.flip();
 
@@ -113,8 +107,6 @@ function FlipCardGame(options) {
         var currentGameState = gameUtils.getGameState(
             {cards, cardsFlippedByPlayers, pairsFoundByPlayers, currentPlayer}
         );
-
-        console.log(currentGameState);
 
         if (currentGameState.state === gameStates.OVER) {
             eventEmitter.emit(gameEvents.GAME_OVER_EVENT, {

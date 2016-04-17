@@ -22,18 +22,14 @@ function isValidPlayerToDoFlip(player) {
 }
 
 function getObjectByOptions(options) {
-    if (options.object) {
-        let foundObjects = options.objects.filter((object) => object === options.object);
-        if (foundObjects.length === 0) {
-            throw new Error(`Error finding object`);
-        }
+    const filterByInstance = (object) => object === options.object;
+    const filterById = (object) => object.getId() === options.id;
+    const filterFn = typeof options.id !== 'undefined' ? filterById :
+        filterByInstance;
 
-        return foundObjects[0];
-    }
-
-    let foundObjects = options.objects.filter((object)=>object.getId() === options.id);
+    const foundObjects = options.objects.filter(filterFn);
     if (foundObjects.length === 0) {
-        throw new Error(`Error finding object with id ${options.id}`);
+        throw new Error(`Error finding object`);
     }
 
     return foundObjects[0];
@@ -112,12 +108,9 @@ function getWinners(options) {
     for (let [player, pairsFoundByPlayer] of options.pairsFoundByPlayers) {
         const pairsAmountFoundByPlayer = pairsFoundByPlayer.length;
 
-        console.log('pairsAmountFoundByPlayer', player.getId(), '=', pairsFoundByPlayer.length);
-
-        pairsFound = pairsFound + pairsAmountFoundByPlayer;
+        pairsFound += pairsAmountFoundByPlayer;
 
         if (pairsAmountFoundByPlayer >= pairsRequiredToWinImmediately) {
-            console.log('winner!', pairsAmountFoundByPlayer, pairsRequiredToWinImmediately);
             return [player];
         }
 
@@ -153,15 +146,15 @@ function getWinners(options) {
 
     //now we need to understand if single player who has more cards than others
     // leaves any chances to others
-    for (let [pairsAmount, players] of playersByFoundPairsAmount) {
-        //If remaining pairs amount + pairs found
-        // by anyone is less than max, max won
-        if ((pairsAmount + remainingPairs) < maxFoundPairsAmount) {
-            return playersWithMaxFoundPairs.slice();
+    for (let [pairsAmount] of playersByFoundPairsAmount) {
+        //If any other player has chance to get more or equal to max, game
+        // goes on
+        if ((pairsAmount + remainingPairs) >= maxFoundPairsAmount) {
+            return [];
         }
     }
 
-    return [];
+    return playersWithMaxFoundPairs.slice();
 }
 
 function getGameState(options) {
