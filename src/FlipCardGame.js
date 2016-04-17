@@ -49,7 +49,7 @@ function FlipCardGame(options) {
     const cards = options.cards || cardsGenerator.generate(options.cardsAmount);
     this.getCards = () => cards;
 
-    const cardPairsFoundByPlayers = new Map();
+    const pairsFoundByPlayers = new Map();
     const cardsFlippedByPlayers = new Map();
 
     /**
@@ -58,6 +58,9 @@ function FlipCardGame(options) {
      * @param options
      */
     this.flipCard = function (options) {
+
+        console.log('=== flipCard', players.length, players[0] === players[1]);
+
         options = options || {};
 
         const card = gameUtils.getCardToFlip({
@@ -65,7 +68,6 @@ function FlipCardGame(options) {
             card: options.card,
             cards
         });
-
 
         const player = gameUtils.getPlayerToFlipCard({
             playerId: options.playerId,
@@ -77,6 +79,9 @@ function FlipCardGame(options) {
 
         currentPlayer = player;
 
+        console.log('currentPlayer === players[0]', currentPlayer === players[0], 'currentPlayer === players[1]', currentPlayer === players[1]);
+        console.log('options.player === players[0]', options.player === players[0], 'options.player === players[1]', options.player === players[1]);
+
         card.flip();
 
         currentFlippedPair.push(card);
@@ -87,6 +92,7 @@ function FlipCardGame(options) {
                     gameEvents.PLAYER_FOUND_PAIR_EVENT,
                     {cards: currentFlippedPair, player}
                 );
+                pairsFoundByPlayers.get(player).push(currentFlippedPair.slice());
             }
             else {
                 //we need to flip back cards if pair has not been found
@@ -98,32 +104,37 @@ function FlipCardGame(options) {
                 gameEvents.PLAYER_FINISHED_FLIPPING_PAIR_EVENT,
                 {cards: currentFlippedPair, player}
             );
-            currentFlippedPair = [];
-            currentPlayer = undefined;
         }
 
         cardsFlippedByPlayers.get(player).push(card);
-        //cardPairsFoundByPlayers.get(player).push(card);
 
         eventEmitter.emit(gameEvents.CARD_FLIP_EVENT, {card, player});
 
-        //TODO: if it's player second card, check if it's pair, if yes - move them to play count otherwise, flip back
         var currentGameState = gameUtils.getGameState(
-            {cards, cardsFlippedByPlayers, cardPairsFoundByPlayers}
+            {cards, cardsFlippedByPlayers, pairsFoundByPlayers, currentPlayer}
         );
-        if (currentGameState === gameStates.OVER) {
+
+        console.log(currentGameState);
+
+        if (currentGameState.state === gameStates.OVER) {
             eventEmitter.emit(gameEvents.GAME_OVER_EVENT, {
-                winnerPlayer: gameUtils.getWinningPlayer({players})
+                winner: currentGameState.winners[0]
+            });
+        }
+        else if (currentGameState.state === gameStates.DRAW) {
+            eventEmitter.emit(gameEvents.GAME_DRAW_EVENT, {
+                winners: currentGameState.winners
             });
         }
 
-        else if (currentGameState === gameStates.DRAW) {
-            eventEmitter.emit(gameEvents.GAME_DRAW_EVENT);
+        if (currentFlippedPair.length === 2) {
+            currentFlippedPair = [];
+            currentPlayer = undefined;
         }
     };
 
     players.forEach(function (player) {
-        cardPairsFoundByPlayers.set(player, []);
+        pairsFoundByPlayers.set(player, []);
         cardsFlippedByPlayers.set(player, []);
     });
 

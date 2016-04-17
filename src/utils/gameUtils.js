@@ -4,7 +4,7 @@ import gameStates from "../../src/constants/gameStates";
 /**
  * Gets next valid player for the move. Checks which player made less moves
  */
-function getNextValidPlayer(cardsFlippedByPlayers) {
+function getNextValidPlayer() {
 
 }
 
@@ -16,23 +16,24 @@ function getNextRandomCard() {
  * Checks if this player can move now
  * @param player
  */
-function isValidPlayerToDoFlip(player, cardsFlippedByPlayer) {
+function isValidPlayerToDoFlip(player) {
     //TODO: make sure that this player has not flipped more than 2 cards than others players
     return true;
 }
 
 function getObjectByOptions(options) {
-    var searchedId;
     if (options.object) {
-        searchedId = options.object.getId();
-    }
-    else if (options.id) {
-        searchedId = options.id;
+        let foundObjects = options.objects.filter((object) => object === options.object);
+        if (foundObjects.length === 0) {
+            throw new Error(`Error finding object`);
+        }
+
+        return foundObjects[0];
     }
 
-    var foundObjects = options.objects.filter((object)=>object.getId() === searchedId);
+    let foundObjects = options.objects.filter((object)=>object.getId() === options.id);
     if (foundObjects.length === 0) {
-        throw new Error(`Error finding object with id ${searchedId}`);
+        throw new Error(`Error finding object with id ${options.id}`);
     }
 
     return foundObjects[0];
@@ -53,10 +54,10 @@ function getPlayerToFlipCard(options) {
         });
     }
     else {
-        player = getNextValidPlayer(options.cardsFlippedByPlayers);
+        player = getNextValidPlayer();
     }
 
-    if (!isValidPlayerToDoFlip(player, options.cardsFlippedByPlayers)) {
+    if (!isValidPlayerToDoFlip(player)) {
         throw new Error(`Player ${player.getId()} can't flip cards now`);
     }
 
@@ -96,65 +97,97 @@ function getCardToFlip(options) {
 /**
  * Checks amount of card pairs found bvy each player and calculates which player(s) has(ve)
  * most amount of card pairs found
- * @param cardPairsFoundByPlayers
  * @returns {Array}
+ * @param options
  */
-function getWinningPlayers(cardPairsFoundByPlayers) {
-    var playersByFoundAmount = new Map();
+function getWinners(options) {
+    //when there are 6 cards and someone found 2 pairs, there is no chance
+    //for other person to win!
+    const totalPairs = Math.floor(options.cards.length / 2);
+    const pairsRequiredToWinImmediately = Math.floor(totalPairs / 2) + 1;
+    const playersByFoundPairsAmount = new Map();
+    var pairsFound = 0;
+    var maxFoundPairsAmount = 0;
 
-    cardPairsFoundByPlayers.forEach(function (cardPairsFoundByPlayer, player) {
-        var amountFoundByPlayer = cardPairsFoundByPlayer.length;
-        if (!playersByFoundAmount.has(amountFoundByPlayer)) {
-            playersByFoundAmount.set(amountFoundByPlayer, []);
+    for (let [player, pairsFoundByPlayer] of options.pairsFoundByPlayers) {
+        const pairsAmountFoundByPlayer = pairsFoundByPlayer.length;
+
+        console.log('pairsAmountFoundByPlayer', player.getId(), '=', pairsFoundByPlayer.length);
+
+        pairsFound = pairsFound + pairsAmountFoundByPlayer;
+
+        if (pairsAmountFoundByPlayer >= pairsRequiredToWinImmediately) {
+            console.log('winner!', pairsAmountFoundByPlayer, pairsRequiredToWinImmediately);
+            return [player];
         }
-        playersByFoundAmount.get(amountFoundByPlayer).push(player);
-    });
 
-    var longestArray = [];
-    playersByFoundAmount.forEach(function (players) {
-        if (players.length > longestArray.length) {
-            longestArray = players;
+        if (pairsAmountFoundByPlayer > maxFoundPairsAmount) {
+            maxFoundPairsAmount = pairsAmountFoundByPlayer;
         }
-    });
 
-    return longestArray;
+        if (!playersByFoundPairsAmount.has(pairsAmountFoundByPlayer)) {
+            playersByFoundPairsAmount.set(pairsAmountFoundByPlayer, []);
+        }
+
+        playersByFoundPairsAmount.get(pairsAmountFoundByPlayer).push(player);
+    }
+
+    //TODO: take into account order of moves, you can identify game state
+    // earlier
+
+    const remainingPairs = totalPairs - pairsFound;
+    const playersWithMaxFoundPairs = playersByFoundPairsAmount.get(maxFoundPairsAmount);
+
+    //identifying draw
+    if (remainingPairs === 0) {
+        return playersWithMaxFoundPairs.slice();
+    }
+
+    //if there are unfound pairs and more than 1 player with maximum amount
+    // of found cards - any of them can win and we can't find winner now
+    if (playersWithMaxFoundPairs.length > 1) {
+        //if remaining pairs amount + pairs found by anyone is less
+        // than max, max won
+        return [];
+    }
+
+    //now we need to understand if single player who has more cards than others
+    // leaves any chances to others
+    for (let [pairsAmount, players] of playersByFoundPairsAmount) {
+        //If remaining pairs amount + pairs found
+        // by anyone is less than max, max won
+        if ((pairsAmount + remainingPairs) < maxFoundPairsAmount) {
+            return playersWithMaxFoundPairs.slice();
+        }
+    }
+
+    return [];
 }
 
 function getGameState(options) {
-    var flippedCards = [];
+    if (!options.currentPlayer) {
+        return {state: gameStates.NEW};
+    }
 
-    options.cardsFlippedByPlayers.forEach(function (card) {
-        flippedCards.push(card);
+    const winners = getWinners({
+        cards: options.cards,
+        pairsFoundByPlayers: options.pairsFoundByPlayers
     });
 
-    if (flippedCards.length === 0) {
-        return gameStates.NEW;
+    if (winners.length === 0) {
+        return {state: gameStates.PLAYING};
     }
 
-    var totalCardsWithPairsFound = [];
-    options.cardPairsFoundByPlayers.forEach(function (cards) {
-        cards.forEach(function (card) {
-            totalCardsWithPairsFound.push(card);
-        });
-    });
-
-    if (options.cards.length > totalCardsWithPairsFound.length) {
-        return gameStates.PLAYING;
+    if (winners.length === 1) {
+        return {state: gameStates.OVER, winners};
     }
 
-    if (options.cards.length === totalCardsWithPairsFound.length) {
-        var winningPlayers = getWinningPlayers(options.cardPairsFoundByPlayers);
-        if (winningPlayers.length === 1) {
-            return gameStates.OVER;
-        }
-        return gameStates.DRAW;
-    }
-
-    throw new Error('Gme state can\'t be calculated');
+    return {state: gameStates.DRAW, winners};
 }
 
 export default {
     getGameState,
     getPlayerToFlipCard,
-    getCardToFlip
+    getCardToFlip,
+    getWinners
 };

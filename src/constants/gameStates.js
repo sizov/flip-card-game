@@ -1,6 +1,6 @@
 export default {
-    OVER: 'over',
-    DRAW: 'draw',
-    PLAYING: 'playing',
-    NEW: 'new'
+    OVER: 'gameOver',
+    DRAW: 'drawGame',
+    PLAYING: 'playingGame',
+    NEW: 'newGame'
 };
