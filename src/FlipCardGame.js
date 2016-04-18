@@ -11,7 +11,6 @@ const DEFAULT_OPTIONS = {
     cardsAmount: 10
 };
 
-//TODO: add events - move, game over
 function FlipCardGame(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
 
@@ -22,9 +21,9 @@ function FlipCardGame(options) {
     /**
      * State of the game - is it new game, in process or finished
      */
-    //TODO: can we make this as getter on utils calculation function?
-    var state = gameStates.NEW;
-    this.getState = () => state;
+    this.getState = () => gameUtils.getGameState(
+        {cards, cardsFlippedByPlayers, pairsFoundByPlayers, currentPlayer}
+    );
 
     /**
      * Player who turns cards now
@@ -52,6 +51,19 @@ function FlipCardGame(options) {
     const pairsFoundByPlayers = new Map();
     const cardsFlippedByPlayers = new Map();
 
+    function emitPossibleGameEndEvents(gameState) {
+        if (gameState.state === gameStates.OVER) {
+            eventEmitter.emit(gameEvents.GAME_OVER_EVENT, {
+                winner: gameState.winners[0]
+            });
+        }
+        else if (gameState.state === gameStates.DRAW) {
+            eventEmitter.emit(gameEvents.GAME_DRAW_EVENT, {
+                winners: gameState.winners
+            });
+        }
+    }
+
     /**
      * Method to make a move by player.
      * This method changes the state of game by flipping a card.
@@ -66,7 +78,7 @@ function FlipCardGame(options) {
             cards
         });
 
-        const player = gameUtils.getPlayerToFlipCard({
+        currentPlayer = gameUtils.getPlayerToFlipCard({
             playerId: options.playerId,
             player: options.player,
             currentPlayer,
@@ -74,19 +86,20 @@ function FlipCardGame(options) {
             cardsFlippedByPlayers
         });
 
-        currentPlayer = player;
-
         card.flip();
-
+        cardsFlippedByPlayers.get(currentPlayer).push(card);
         currentFlippedPair.push(card);
+        eventEmitter.emit(gameEvents.CARD_FLIP_EVENT, {
+            card,
+            player: currentPlayer
+        });
 
+        //if pair has been flipped, time to check it
         if (currentFlippedPair.length === 2) {
-            if (currentFlippedPair[0].getPairId() === currentFlippedPair[1].getPairId()) {
-                eventEmitter.emit(
-                    gameEvents.PLAYER_FOUND_PAIR_EVENT,
-                    {cards: currentFlippedPair, player}
-                );
-                pairsFoundByPlayers.get(player).push(currentFlippedPair.slice());
+            if (gameUtils.cardsArePair(currentFlippedPair[0], currentFlippedPair[1])) {
+                eventEmitter.emit(gameEvents.PLAYER_FOUND_PAIR_EVENT,
+                    {cards: currentFlippedPair, player: currentPlayer});
+                pairsFoundByPlayers.get(currentPlayer).push(currentFlippedPair.slice());
             }
             else {
                 //we need to flip back cards if pair has not been found
@@ -94,33 +107,15 @@ function FlipCardGame(options) {
                 currentFlippedPair[1].flip();
             }
 
-            eventEmitter.emit(
-                gameEvents.PLAYER_FINISHED_FLIPPING_PAIR_EVENT,
-                {cards: currentFlippedPair, player}
-            );
+            eventEmitter.emit(gameEvents.PLAYER_FINISHED_FLIPPING_PAIR_EVENT,
+                {cards: currentFlippedPair, player: currentPlayer});
+
+            currentFlippedPair = [];
         }
 
-        cardsFlippedByPlayers.get(player).push(card);
-
-        eventEmitter.emit(gameEvents.CARD_FLIP_EVENT, {card, player});
-
-        var currentGameState = gameUtils.getGameState(
-            {cards, cardsFlippedByPlayers, pairsFoundByPlayers, currentPlayer}
-        );
-
-        if (currentGameState.state === gameStates.OVER) {
-            eventEmitter.emit(gameEvents.GAME_OVER_EVENT, {
-                winner: currentGameState.winners[0]
-            });
-        }
-        else if (currentGameState.state === gameStates.DRAW) {
-            eventEmitter.emit(gameEvents.GAME_DRAW_EVENT, {
-                winners: currentGameState.winners
-            });
-        }
+        emitPossibleGameEndEvents(this.getState());
 
         if (currentFlippedPair.length === 2) {
-            currentFlippedPair = [];
             currentPlayer = undefined;
         }
     };

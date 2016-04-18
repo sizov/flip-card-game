@@ -42,5 +42,5 @@ test("FlipCardGame game state, has to be in new state on start", (t) => {
 
     var game = new FlipCardGame();
 
-    t.equal(game.getState(), gameStates.NEW);
+    t.equal(game.getState().state, gameStates.NEW);
 });

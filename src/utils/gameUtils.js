@@ -178,7 +178,10 @@ function getGameState(options) {
     return {state: gameStates.DRAW, winners};
 }
 
+var cardsArePair = (cardA, cardB) => cardA.getPairId() === cardB.getPairId()
+
 export default {
+    cardsArePair,
     getGameState,
     getPlayerToFlipCard,
     getCardToFlip,
