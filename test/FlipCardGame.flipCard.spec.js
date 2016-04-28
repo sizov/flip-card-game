@@ -1,7 +1,6 @@
 import test from "tape";
 import FlipCardGame from "../src/FlipCardGame";
 import cardStates from "../src/constants/cardStates";
-import gameStates from "../src/constants/gameStates";
 
 test("FlipCardGame flip should change the state of cards", (t) => {
     t.plan(1);

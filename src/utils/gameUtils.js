@@ -12,11 +12,7 @@ function getNextRandomCard() {
 
 }
 
-/**
- * Checks if this player can move now
- * @param player
- */
-function isValidPlayerToDoFlip(player) {
+function isValidPlayerToDoFlip() {
     //TODO: make sure that this player has not flipped more than 2 cards than others players
     return true;
 }
@@ -178,7 +174,7 @@ function getGameState(options) {
     return {state: gameStates.DRAW, winners};
 }
 
-var cardsArePair = (cardA, cardB) => cardA.getPairId() === cardB.getPairId()
+var cardsArePair = (cardA, cardB) => cardA.getPairId() === cardB.getPairId();
 
 export default {
     cardsArePair,

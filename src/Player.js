@@ -7,10 +7,6 @@ const DEFAULT_OPTIONS = {
 function Player(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-    function addPair(card1, card2) {
-        pairedCards.push([card1, card2]);
-    }
-
     return Object.assign(
         {},
         HasId({id: options.id})

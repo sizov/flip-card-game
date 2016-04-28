@@ -3,7 +3,6 @@ import FlipCardGame from "../src/FlipCardGame";
 import Card from "../src/Card";
 import Player from "../src/Player";
 import cardStates from "../src/constants/cardStates";
-import gameStates from "../src/constants/gameStates";
 import gameEvents from "../src/constants/gameEvents";
 
 test('FlipCardGame', (t) => {
