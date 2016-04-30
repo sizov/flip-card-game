@@ -59,5 +59,8 @@
     "tape": "*",
     "watch": "*",
     "webpack": "^1.13.0"
+  },
+  "dependencies": {
+    "wolfy87-eventemitter": "^4.3.0"
   }
 }
