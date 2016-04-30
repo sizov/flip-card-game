@@ -7,7 +7,7 @@
 		exports["flip-card-game"] = factory(require("wolfy87-eventemitter"));
 	else
 		root["flip-card-game"] = factory(root["wolfy87-eventemitter"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_11__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_12__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -64,10 +64,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _FlipCardGame2 = _interopRequireDefault(_FlipCardGame);
 
+	var _cardStates = __webpack_require__(1);
+
+	var _cardStates2 = _interopRequireDefault(_cardStates);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
-	    FlipCardGame: _FlipCardGame2.default
+	    FlipCardGame: _FlipCardGame2.default,
+	    cardStates: _cardStates2.default
 	};
 
 /***/ },
@@ -102,23 +107,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	//FIXME: use id generator to get IDs by default
-	//import idGenerator from '../utils/idGenerator';
+
+	var _idGenerator = __webpack_require__(10);
+
+	var _idGenerator2 = _interopRequireDefault(_idGenerator);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = function (state) {
 	    return {
 	        getId: function getId() {
-	            return state.id;
+	            return typeof state.id === 'undefined' ? _idGenerator2.default.generate() : state.id;
 	        }
 	    };
-	};
+	}; //FIXME: use id generator to get IDs by default
 
 /***/ },
 /* 4 */
@@ -214,11 +223,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _cardsGenerator2 = _interopRequireDefault(_cardsGenerator);
 
-	var _playersGenerator = __webpack_require__(10);
+	var _playersGenerator = __webpack_require__(11);
 
 	var _playersGenerator2 = _interopRequireDefault(_playersGenerator);
 
-	var _wolfy87Eventemitter = __webpack_require__(11);
+	var _wolfy87Eventemitter = __webpack_require__(12);
 
 	var _wolfy87Eventemitter2 = _interopRequireDefault(_wolfy87Eventemitter);
 
@@ -688,6 +697,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var id = 0;
+	function generate() {
+	    if (id !== 0) {
+	        id = id + 1;
+	    }
+	    return id.toString();
+	}
+
+	exports.default = {
+	    generate: generate
+	};
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -723,10 +753,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
 
 /***/ }
 /******/ ])
