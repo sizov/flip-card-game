@@ -429,10 +429,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 0; i < amount; i++) {
 	        cards.push(new _Card2.default({
 	            id: i,
-	            pairId: pairId
+	            pairId: pairId.toString()
 	        }));
 
-	        if (pairId % 2 !== 0) {
+	        if (i % 2 !== 0) {
 	            pairId = pairId + 1;
 	        }
 	    }
