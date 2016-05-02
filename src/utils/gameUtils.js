@@ -12,8 +12,27 @@ function getNextRandomCard() {
 
 }
 
-function isValidPlayerToDoFlip() {
-    //TODO: make sure that this player has not flipped more than 2 cards than others players
+/**
+ * Checks if passed player can make move on current state of the game.
+ * Basically it looks if passed player moved more cards than others
+ *
+ * @param options Options
+ * @param options.player Player to make move
+ * @param options.cardsFlippedByPlayers Map of cards flipped by each player
+ *
+ * @returns {boolean} Valid player to move or not
+ */
+function isValidPlayerToDoFlip(options) {
+
+    const cardsFlippedByTargetPlayer = options.cardsFlippedByPlayers.get(options.player);
+
+    for (let [player, cardsFlippedByPlayer] of options.cardsFlippedByPlayers) {
+        if (cardsFlippedByTargetPlayer.length -
+            cardsFlippedByPlayer.length >= 2) {
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -31,6 +50,19 @@ function getObjectByOptions(options) {
     return foundObjects[0];
 }
 
+/**
+ * Gets player for next move. You can pass player instance and it will check
+ * if instance is among collection of players that play game (same with passing
+ * player Id). Or if you don't pass player - it will calculate who is next to
+ * move among all players.
+ *
+ * @param options Options object
+ * @param options.player Player instance
+ * @param options.playerId Id of player
+ * @param options.players Array of players
+ *
+ * @returns {*} Next player to make move
+ */
 function getPlayerToFlipCard(options) {
     options = options || {};
 
@@ -49,7 +81,10 @@ function getPlayerToFlipCard(options) {
         player = getNextValidPlayer();
     }
 
-    if (!isValidPlayerToDoFlip(player)) {
+    if (!isValidPlayerToDoFlip({
+            player,
+            cardsFlippedByPlayers: options.cardsFlippedByPlayers
+        })) {
         throw new Error(`Player ${player.getId()} can't flip cards now`);
     }
 

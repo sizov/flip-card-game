@@ -252,6 +252,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    cardsAmount: 10
 	};
 
+	//TODO: auto-flip cards back if player didn't find pair
+	//TODO: add error event
+
 	function FlipCardGame(options) {
 	    options = Object.assign({}, DEFAULT_OPTIONS, options);
 
@@ -298,7 +301,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var pairsFoundByPlayers = new Map();
 	    var cardsFlippedByPlayers = new Map();
 
-	    function emitPossibleGameEndEvents(gameState) {
+	    function emitPossibleGameEndEvent(gameState) {
 	        if (gameState.state === _gameStates2.default.OVER) {
 	            eventEmitter.emit(_gameEvents2.default.GAME_OVER_EVENT, {
 	                winner: gameState.winners[0]
@@ -362,7 +365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            currentFlippedPair = [];
 	        }
 
-	        emitPossibleGameEndEvents(this.getState());
+	        emitPossibleGameEndEvent(this.getState());
 
 	        if (currentFlippedPair.length === 2) {
 	            currentPlayer = undefined;
@@ -477,8 +480,50 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function getNextRandomCard() {}
 
-	function isValidPlayerToDoFlip() {
-	    //TODO: make sure that this player has not flipped more than 2 cards than others players
+	/**
+	 * Checks if passed player can make move on current state of the game.
+	 * Basically it looks if passed player moved more cards than others
+	 *
+	 * @param options Options
+	 * @param options.player Player to make move
+	 * @param options.cardsFlippedByPlayers Map of cards flipped by each player
+	 *
+	 * @returns {boolean} Valid player to move or not
+	 */
+	function isValidPlayerToDoFlip(options) {
+
+	    var cardsFlippedByTargetPlayer = options.cardsFlippedByPlayers.get(options.player);
+
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+
+	    try {
+	        for (var _iterator = options.cardsFlippedByPlayers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var _step$value = _slicedToArray(_step.value, 2);
+
+	            var player = _step$value[0];
+	            var cardsFlippedByPlayer = _step$value[1];
+
+	            if (cardsFlippedByTargetPlayer.length - cardsFlippedByPlayer.length >= 2) {
+	                return false;
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+
 	    return true;
 	}
 
@@ -499,6 +544,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return foundObjects[0];
 	}
 
+	/**
+	 * Gets player for next move. You can pass player instance and it will check
+	 * if instance is among collection of players that play game (same with passing
+	 * player Id). Or if you don't pass player - it will calculate who is next to
+	 * move among all players.
+	 *
+	 * @param options Options object
+	 * @param options.player Player instance
+	 * @param options.playerId Id of player
+	 * @param options.players Array of players
+	 *
+	 * @returns {*} Next player to make move
+	 */
 	function getPlayerToFlipCard(options) {
 	    options = options || {};
 
@@ -516,7 +574,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        player = getNextValidPlayer();
 	    }
 
-	    if (!isValidPlayerToDoFlip(player)) {
+	    if (!isValidPlayerToDoFlip({
+	        player: player,
+	        cardsFlippedByPlayers: options.cardsFlippedByPlayers
+	    })) {
 	        throw new Error("Player " + player.getId() + " can't flip cards now");
 	    }
 
@@ -567,16 +628,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var pairsFound = 0;
 	    var maxFoundPairsAmount = 0;
 
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
 
 	    try {
-	        for (var _iterator = options.pairsFoundByPlayers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var _step$value = _slicedToArray(_step.value, 2);
+	        for (var _iterator2 = options.pairsFoundByPlayers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var _step2$value = _slicedToArray(_step2.value, 2);
 
-	            var player = _step$value[0];
-	            var pairsFoundByPlayer = _step$value[1];
+	            var player = _step2$value[0];
+	            var pairsFoundByPlayer = _step2$value[1];
 
 	            var pairsAmountFoundByPlayer = pairsFoundByPlayer.length;
 
@@ -600,16 +661,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        //TODO: take into account order of moves, you can identify game state
 	        // earlier
 	    } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
 	    } finally {
 	        try {
-	            if (!_iteratorNormalCompletion && _iterator.return) {
-	                _iterator.return();
+	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                _iterator2.return();
 	            }
 	        } finally {
-	            if (_didIteratorError) {
-	                throw _iteratorError;
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
 	            }
 	        }
 	    }
@@ -632,15 +693,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    //now we need to understand if single player who has more cards than others
 	    // leaves any chances to others
-	    var _iteratorNormalCompletion2 = true;
-	    var _didIteratorError2 = false;
-	    var _iteratorError2 = undefined;
+	    var _iteratorNormalCompletion3 = true;
+	    var _didIteratorError3 = false;
+	    var _iteratorError3 = undefined;
 
 	    try {
-	        for (var _iterator2 = playersByFoundPairsAmount[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	            var _step2$value = _slicedToArray(_step2.value, 1);
+	        for (var _iterator3 = playersByFoundPairsAmount[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	            var _step3$value = _slicedToArray(_step3.value, 1);
 
-	            var pairsAmount = _step2$value[0];
+	            var pairsAmount = _step3$value[0];
 
 	            //If any other player has chance to get more or equal to max, game
 	            // goes on
@@ -649,16 +710,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
+	        _didIteratorError3 = true;
+	        _iteratorError3 = err;
 	    } finally {
 	        try {
-	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                _iterator2.return();
+	            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	                _iterator3.return();
 	            }
 	        } finally {
-	            if (_didIteratorError2) {
-	                throw _iteratorError2;
+	            if (_didIteratorError3) {
+	                throw _iteratorError3;
 	            }
 	        }
 	    }

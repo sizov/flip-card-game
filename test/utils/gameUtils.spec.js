@@ -37,7 +37,7 @@ test("gameUtils should identify that game is in DRAW state when all" +
     const gameState = gameUtils.getGameState({
         currentPlayer: playerA,
         cards,
-        pairsFoundByPlayers,
+        pairsFoundByPlayers
     });
 
     t.equal(gameState.state, gameStates.DRAW);
@@ -58,7 +58,7 @@ test("gameUtils should identify that game is in OVER state when all cards " +
 
     const pairsFoundByPlayers = new Map();
     pairsFoundByPlayers.set(playerA, [
-        [card0, card1], [card2, card3],
+        [card0, card1], [card2, card3]
     ]);
     pairsFoundByPlayers.set(playerB, []);
 
@@ -348,5 +348,6 @@ test("gameUtils should identify that there is no winner yet when" +
         cards,
         pairsFoundByPlayers
     });
+
     t.equal(winners.length, 0);
 });

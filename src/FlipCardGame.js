@@ -4,6 +4,9 @@ import gameUtils from "./utils/gameUtils";
 import cardsGenerator from "./utils/cardsGenerator";
 import playersGenerator from "./utils/playersGenerator";
 
+//TODO: auto-flip cards back if player didn't find pair
+//TODO: add error event
+
 import EventEmitter from 'wolfy87-eventemitter';
 
 const DEFAULT_OPTIONS = {
@@ -51,7 +54,7 @@ function FlipCardGame(options) {
     const pairsFoundByPlayers = new Map();
     const cardsFlippedByPlayers = new Map();
 
-    function emitPossibleGameEndEvents(gameState) {
+    function emitPossibleGameEndEvent(gameState) {
         if (gameState.state === gameStates.OVER) {
             eventEmitter.emit(gameEvents.GAME_OVER_EVENT, {
                 winner: gameState.winners[0]
@@ -119,7 +122,7 @@ function FlipCardGame(options) {
             currentFlippedPair = [];
         }
 
-        emitPossibleGameEndEvents(this.getState());
+        emitPossibleGameEndEvent(this.getState());
 
         if (currentFlippedPair.length === 2) {
             currentPlayer = undefined;
