@@ -66,8 +66,6 @@ function getObjectByOptions(options) {
 function getPlayerToFlipCard(options) {
     options = options || {};
 
-    //TODO: control the amount of moves - only two moves per player
-
     var player;
 
     if (options.player || options.playerId) {
@@ -156,8 +154,7 @@ function getWinners(options) {
         playersByFoundPairsAmount.get(pairsAmountFoundByPlayer).push(player);
     }
 
-    //TODO: take into account order of moves, you can identify game state
-    // earlier
+    //TODO: take into account order of moves, you can identify game state earlier
 
     const remainingPairs = totalPairs - pairsFound;
     const playersWithMaxFoundPairs = playersByFoundPairsAmount.get(maxFoundPairsAmount);

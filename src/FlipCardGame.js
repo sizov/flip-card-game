@@ -4,8 +4,7 @@ import gameUtils from "./utils/gameUtils";
 import cardsGenerator from "./utils/cardsGenerator";
 import playersGenerator from "./utils/playersGenerator";
 
-//TODO: auto-flip cards back if player didn't find pair
-//TODO: add error event
+//TODO: add error event ?
 
 import EventEmitter from 'wolfy87-eventemitter';
 
@@ -70,13 +69,14 @@ function FlipCardGame(options) {
     /**
      * Method to make a move by player.
      * This method changes the state of game by flipping a card.
-     * @param options
-     * - player Player (instance) who makes current move
-     * - playerId Alternative to passing Player instance - you can pass ID of
-     * Player instance
-     * - card Card (instance) which passed player wants to flip
-     * - card Alternative to passing Card instance) - you can pass ID of
-     * Card instance
+     *
+     * @param options Options object
+     * @param options.player Player (instance) who makes current move
+     * @param options.playerId Alternative to passing Player instance -
+     * you can pass ID of Player instance
+     * @param options.card Card (instance) which passed player wants to flip
+     * @param options.cardId Alternative to passing Card instance) -
+     * you can pass ID of Card instance
      */
     this.flipCard = function (options) {
         options = options || {};
@@ -105,19 +105,21 @@ function FlipCardGame(options) {
 
         //if pair has been flipped, time to check it
         if (currentFlippedPair.length === 2) {
+            let pairEventsToEmit = [gameEvents.PLAYER_FINISHED_FLIPPING_PAIR_EVENT];
             if (gameUtils.cardsArePair(currentFlippedPair[0], currentFlippedPair[1])) {
-                eventEmitter.emit(gameEvents.PLAYER_FOUND_PAIR_EVENT,
-                    {cards: currentFlippedPair, player: currentPlayer});
                 pairsFoundByPlayers.get(currentPlayer).push(currentFlippedPair.slice());
+                pairEventsToEmit.push(gameEvents.PLAYER_FOUND_PAIR_EVENT);
             }
             else {
                 //we need to flip back cards if pair has not been found
-                currentFlippedPair[0].flip();
-                currentFlippedPair[1].flip();
+                currentFlippedPair.forEach((card) => card.flip());
+                pairEventsToEmit.push(gameEvents.PLAYER_MISSED_PAIR_EVENT);
             }
 
-            eventEmitter.emit(gameEvents.PLAYER_FINISHED_FLIPPING_PAIR_EVENT,
-                {cards: currentFlippedPair, player: currentPlayer});
+            pairEventsToEmit.forEach(function (eventName) {
+                eventEmitter.emit(eventName,
+                    {cards: currentFlippedPair, player: currentPlayer});
+            });
 
             currentFlippedPair = [];
         }

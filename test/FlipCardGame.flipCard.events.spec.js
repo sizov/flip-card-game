@@ -91,6 +91,29 @@ test('FlipCardGame', (t) => {
         });
     });
 
+    t.test("should fire PLAYER_MISSED_PAIR_EVENT event when player " +
+        "flipped two cards and their IDs are different", (t) => {
+        t.plan(3);
+
+        const game = getNewGame4Cards();
+
+        game.on(gameEvents.PLAYER_MISSED_PAIR_EVENT, function (event) {
+            t.equal(event.player, player0);
+            t.equal(event.cards[0], card0);
+            t.equal(event.cards[1], card2);
+        });
+
+        game.flipCard({
+            card: card0,
+            player: player0
+        });
+
+        game.flipCard({
+            card: card2,
+            player: player0
+        });
+    });
+
     t.test("should fire GAME_OVER event when one player found more" +
         " pairs than others and there are no way for others to win", (t) => {
         t.plan(1);

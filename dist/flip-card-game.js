@@ -106,6 +106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = {
 	    CARD_FLIP_EVENT: 'cardFlipEvent',
 	    PLAYER_FOUND_PAIR_EVENT: 'playerFoundPairEvent',
+	    PLAYER_MISSED_PAIR_EVENT: 'playerMissedPairEvent',
 	    PLAYER_FINISHED_FLIPPING_PAIR_EVENT: 'playerFinishedFlippingPairEvent',
 	    GAME_OVER_EVENT: 'gameOverEvent',
 	    GAME_DRAW_EVENT: 'gameDrawEvent'
@@ -252,8 +253,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    cardsAmount: 10
 	};
 
-	//TODO: auto-flip cards back if player didn't find pair
-	//TODO: add error event
+	//TODO: add error event ?
 
 	function FlipCardGame(options) {
 	    options = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -316,13 +316,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Method to make a move by player.
 	     * This method changes the state of game by flipping a card.
-	     * @param options
-	     * - player Player (instance) who makes current move
-	     * - playerId Alternative to passing Player instance - you can pass ID of
-	     * Player instance
-	     * - card Card (instance) which passed player wants to flip
-	     * - card Alternative to passing Card instance) - you can pass ID of
-	     * Card instance
+	     *
+	     * @param options Options object
+	     * @param options.player Player (instance) who makes current move
+	     * @param options.playerId Alternative to passing Player instance -
+	     * you can pass ID of Player instance
+	     * @param options.card Card (instance) which passed player wants to flip
+	     * @param options.cardId Alternative to passing Card instance) -
+	     * you can pass ID of Card instance
 	     */
 	    this.flipCard = function (options) {
 	        options = options || {};
@@ -351,16 +352,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        //if pair has been flipped, time to check it
 	        if (currentFlippedPair.length === 2) {
+	            var pairEventsToEmit = [_gameEvents2.default.PLAYER_FINISHED_FLIPPING_PAIR_EVENT];
 	            if (_gameUtils2.default.cardsArePair(currentFlippedPair[0], currentFlippedPair[1])) {
-	                eventEmitter.emit(_gameEvents2.default.PLAYER_FOUND_PAIR_EVENT, { cards: currentFlippedPair, player: currentPlayer });
 	                pairsFoundByPlayers.get(currentPlayer).push(currentFlippedPair.slice());
+	                pairEventsToEmit.push(_gameEvents2.default.PLAYER_FOUND_PAIR_EVENT);
 	            } else {
 	                //we need to flip back cards if pair has not been found
-	                currentFlippedPair[0].flip();
-	                currentFlippedPair[1].flip();
+	                currentFlippedPair.forEach(function (card) {
+	                    return card.flip();
+	                });
+	                pairEventsToEmit.push(_gameEvents2.default.PLAYER_MISSED_PAIR_EVENT);
 	            }
 
-	            eventEmitter.emit(_gameEvents2.default.PLAYER_FINISHED_FLIPPING_PAIR_EVENT, { cards: currentFlippedPair, player: currentPlayer });
+	            pairEventsToEmit.forEach(function (eventName) {
+	                eventEmitter.emit(eventName, { cards: currentFlippedPair, player: currentPlayer });
+	            });
 
 	            currentFlippedPair = [];
 	        }
@@ -560,8 +566,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	function getPlayerToFlipCard(options) {
 	    options = options || {};
 
-	    //TODO: control the amount of moves - only two moves per player
-
 	    var player;
 
 	    if (options.player || options.playerId) {
@@ -658,8 +662,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            playersByFoundPairsAmount.get(pairsAmountFoundByPlayer).push(player);
 	        }
 
-	        //TODO: take into account order of moves, you can identify game state
-	        // earlier
+	        //TODO: take into account order of moves, you can identify game state earlier
 	    } catch (err) {
 	        _didIteratorError2 = true;
 	        _iteratorError2 = err;
