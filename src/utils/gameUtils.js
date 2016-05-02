@@ -19,18 +19,27 @@ function getNextRandomCard() {
  * @param options Options
  * @param options.player Player to make move
  * @param options.cardsFlippedByPlayers Map of cards flipped by each player
+ * @param options.lastPlayerMadeFlip Last player who made flip
  *
  * @returns {boolean} Valid player to move or not
  */
 function isValidPlayerToDoFlip(options) {
+    //if last was undefined, anyone can move
+    if (typeof options.lastPlayerMadeFlip === 'undefined') {
+        return true;
+    }
 
-    const cardsFlippedByTargetPlayer = options.cardsFlippedByPlayers.get(options.player);
+    const cardsFlippedByLastPlayer = options.cardsFlippedByPlayers.get(options.lastPlayerMadeFlip);
+    const lastPlayerFinishedFlippingPair =
+        cardsFlippedByLastPlayer.length % 2 === 0;
 
-    for (let [player, cardsFlippedByPlayer] of options.cardsFlippedByPlayers) {
-        if (cardsFlippedByTargetPlayer.length -
-            cardsFlippedByPlayer.length >= 2) {
+    if (lastPlayerFinishedFlippingPair) {
+        if (options.player === options.lastPlayerMadeFlip) {
             return false;
         }
+    }
+    else if (options.player !== options.lastPlayerMadeFlip) {
+        return false;
     }
 
     return true;
@@ -81,6 +90,7 @@ function getPlayerToFlipCard(options) {
 
     if (!isValidPlayerToDoFlip({
             player,
+            lastPlayerMadeFlip: options.lastPlayerMadeFlip,
             cardsFlippedByPlayers: options.cardsFlippedByPlayers
         })) {
         throw new Error(`Player ${player.getId()} can't flip cards now`);

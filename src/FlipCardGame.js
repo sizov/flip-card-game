@@ -90,7 +90,7 @@ function FlipCardGame(options) {
         currentPlayer = gameUtils.getPlayerToFlipCard({
             playerId: options.playerId,
             player: options.player,
-            currentPlayer,
+            lastPlayerMadeFlip: currentPlayer,
             players,
             cardsFlippedByPlayers
         });

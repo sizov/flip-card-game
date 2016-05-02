@@ -2,6 +2,30 @@ import test from "tape";
 import gameUtils from "../../src/utils/gameUtils";
 import Player from "../../src/Player";
 
+test("gameUtils.getPlayerToFlipCard should return any player who wish to " +
+    "flip if previous player to flip was undefined", (t) => {
+    t.plan(1);
+
+    const playerA = new Player();
+    const playerB = new Player();
+    const players = [playerA, playerB];
+
+    //simulating cards flipped by players:
+    const cardsFlippedByPlayers = new Map([
+        [playerA, []],
+        [playerB, []]
+    ]);
+
+    const nextPlayer = gameUtils.getPlayerToFlipCard({
+        player: playerA,
+        players,
+        cardsFlippedByPlayers,
+        lastPlayerMadeFlip: undefined
+    });
+
+    t.equal(nextPlayer, playerA);
+});
+
 test("gameUtils.getPlayerToFlipCard should correctly identify player to " +
     "make move if player instance was passed", (t) => {
     t.plan(1);
@@ -20,20 +44,20 @@ test("gameUtils.getPlayerToFlipCard should correctly identify player to " +
     const nextPlayer = gameUtils.getPlayerToFlipCard({
         player: playerA,
         players,
-        cardsFlippedByPlayers
+        cardsFlippedByPlayers,
+        lastPlayerMadeFlip: playerB
     });
 
     t.equal(nextPlayer, playerA);
 });
 
-test("gameUtils.getPlayerToFlipCard should correctly identify player to " +
-    "make move if playerId was passed", (t) => {
+
+test("gameUtils.getPlayerToFlipCard should throw error when player " +
+    "makes more than 2 card flips in a row", (t) => {
     t.plan(1);
 
     const playerA = new Player();
     const playerB = new Player();
-    const id = playerA.getId();
-
     const players = [playerA, playerB];
 
     //simulating cards flipped by players:
@@ -42,37 +66,14 @@ test("gameUtils.getPlayerToFlipCard should correctly identify player to " +
         [playerB, [{}, {}]]
     ]);
 
-    const nextPlayer = gameUtils.getPlayerToFlipCard({
-        playerId: id,
-        players,
-        cardsFlippedByPlayers
+    t.throws(function () {
+        gameUtils.getPlayerToFlipCard({
+            lastPlayerMadeFlip: playerA,
+            player: playerA,
+            players,
+            cardsFlippedByPlayers
+        });
     });
-
-    t.equal(nextPlayer, playerA);
-});
-
-test("gameUtils.getPlayerToFlipCard should return passed player to " +
-    "make move if all players flipped equal amount of cards", (t) => {
-    t.plan(1);
-
-    const playerA = new Player();
-    const playerB = new Player();
-
-    const players = [playerA, playerB];
-
-    //simulating cards flipped by players:
-    const cardsFlippedByPlayers = new Map([
-        [playerA, [{}, {}]],
-        [playerB, [{}, {}]]
-    ]);
-
-    const nextPlayer = gameUtils.getPlayerToFlipCard({
-        player: playerA,
-        players,
-        cardsFlippedByPlayers
-    });
-
-    t.equal(nextPlayer, playerA);
 });
 
 test("gameUtils.getPlayerToFlipCard should return passed player to " +
@@ -86,21 +87,22 @@ test("gameUtils.getPlayerToFlipCard should return passed player to " +
 
     //simulating cards flipped by players:
     const cardsFlippedByPlayers = new Map([
-        [playerA, [{}, {}, {}, {}]],
+        [playerA, [{}, {}, {}]],
         [playerB, [{}, {}]]
     ]);
 
     const nextPlayer = gameUtils.getPlayerToFlipCard({
-        player: playerB,
+        player: playerA,
         players,
-        cardsFlippedByPlayers
+        cardsFlippedByPlayers,
+        lastPlayerMadeFlip: playerA
     });
 
-    t.equal(nextPlayer, playerB);
+    t.equal(nextPlayer, playerA);
 });
 
-test("gameUtils.getPlayerToFlipCard should throw error when passed player " +
-    "made more than 2 moves than other players", (t) => {
+test("gameUtils.getPlayerToFlipCard should throw error if current player " +
+    "has not finished flipping and next made move", (t) => {
     t.plan(1);
 
     const playerA = new Player();
@@ -110,39 +112,40 @@ test("gameUtils.getPlayerToFlipCard should throw error when passed player " +
 
     //simulating cards flipped by players:
     const cardsFlippedByPlayers = new Map([
-        [playerA, [{}, {}, {}, {}]],
+        [playerA, [{}, {}, {}]],
         [playerB, [{}, {}]]
     ]);
 
     t.throws(function () {
         gameUtils.getPlayerToFlipCard({
-            player: playerA,
+            player: playerB,
             players,
-            cardsFlippedByPlayers
+            cardsFlippedByPlayers,
+            lastPlayerMadeFlip: playerA
         });
     });
 });
 
-test("gameUtils.getPlayerToFlipCard should throw error when passed player " +
-    "made more than 2 moves than other players", (t) => {
+test("gameUtils.getPlayerToFlipCard should throw error when player " +
+    "makes makes move when other player flipped only 1 card", (t) => {
     t.plan(1);
 
     const playerA = new Player();
     const playerB = new Player();
-
     const players = [playerA, playerB];
 
     //simulating cards flipped by players:
     const cardsFlippedByPlayers = new Map([
-        [playerA, [{}, {}, {}, {}, {}]],
-        [playerB, [{}, {}]]
+        [playerA, [{}]],
+        [playerB, []]
     ]);
 
     t.throws(function () {
         gameUtils.getPlayerToFlipCard({
-            player: playerA,
+            player: playerB,
             players,
-            cardsFlippedByPlayers
+            cardsFlippedByPlayers,
+            lastPlayerMadeFlip: playerA
         });
     });
 });

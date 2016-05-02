@@ -336,7 +336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        currentPlayer = _gameUtils2.default.getPlayerToFlipCard({
 	            playerId: options.playerId,
 	            player: options.player,
-	            currentPlayer: currentPlayer,
+	            lastPlayerMadeFlip: currentPlayer,
 	            players: players,
 	            cardsFlippedByPlayers: cardsFlippedByPlayers
 	        });
@@ -492,41 +492,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param options Options
 	 * @param options.player Player to make move
 	 * @param options.cardsFlippedByPlayers Map of cards flipped by each player
+	 * @param options.lastPlayerMadeFlip Last player who made flip
 	 *
 	 * @returns {boolean} Valid player to move or not
 	 */
 	function isValidPlayerToDoFlip(options) {
+	    //if last was undefined, anyone can move
+	    if (typeof options.lastPlayerMadeFlip === 'undefined') {
+	        return true;
+	    }
 
-	    var cardsFlippedByTargetPlayer = options.cardsFlippedByPlayers.get(options.player);
+	    var cardsFlippedByLastPlayer = options.cardsFlippedByPlayers.get(options.lastPlayerMadeFlip);
+	    var lastPlayerFinishedFlippingPair = cardsFlippedByLastPlayer.length % 2 === 0;
 
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-
-	    try {
-	        for (var _iterator = options.cardsFlippedByPlayers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var _step$value = _slicedToArray(_step.value, 2);
-
-	            var player = _step$value[0];
-	            var cardsFlippedByPlayer = _step$value[1];
-
-	            if (cardsFlippedByTargetPlayer.length - cardsFlippedByPlayer.length >= 2) {
-	                return false;
-	            }
+	    if (lastPlayerFinishedFlippingPair) {
+	        if (options.player === options.lastPlayerMadeFlip) {
+	            return false;
 	        }
-	    } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion && _iterator.return) {
-	                _iterator.return();
-	            }
-	        } finally {
-	            if (_didIteratorError) {
-	                throw _iteratorError;
-	            }
-	        }
+	    } else if (options.player !== options.lastPlayerMadeFlip) {
+	        return false;
 	    }
 
 	    return true;
@@ -579,6 +563,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if (!isValidPlayerToDoFlip({
 	        player: player,
+	        lastPlayerMadeFlip: options.lastPlayerMadeFlip,
 	        cardsFlippedByPlayers: options.cardsFlippedByPlayers
 	    })) {
 	        throw new Error("Player " + player.getId() + " can't flip cards now");
@@ -631,16 +616,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var pairsFound = 0;
 	    var maxFoundPairsAmount = 0;
 
-	    var _iteratorNormalCompletion2 = true;
-	    var _didIteratorError2 = false;
-	    var _iteratorError2 = undefined;
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
 
 	    try {
-	        for (var _iterator2 = options.pairsFoundByPlayers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	            var _step2$value = _slicedToArray(_step2.value, 2);
+	        for (var _iterator = options.pairsFoundByPlayers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var _step$value = _slicedToArray(_step.value, 2);
 
-	            var player = _step2$value[0];
-	            var pairsFoundByPlayer = _step2$value[1];
+	            var player = _step$value[0];
+	            var pairsFoundByPlayer = _step$value[1];
 
 	            var pairsAmountFoundByPlayer = pairsFoundByPlayer.length;
 
@@ -663,16 +648,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        //TODO: take into account order of moves, you can identify game state earlier
 	    } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
+	        _didIteratorError = true;
+	        _iteratorError = err;
 	    } finally {
 	        try {
-	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                _iterator2.return();
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
 	            }
 	        } finally {
-	            if (_didIteratorError2) {
-	                throw _iteratorError2;
+	            if (_didIteratorError) {
+	                throw _iteratorError;
 	            }
 	        }
 	    }
@@ -695,15 +680,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    //now we need to understand if single player who has more cards than others
 	    // leaves any chances to others
-	    var _iteratorNormalCompletion3 = true;
-	    var _didIteratorError3 = false;
-	    var _iteratorError3 = undefined;
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
 
 	    try {
-	        for (var _iterator3 = playersByFoundPairsAmount[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	            var _step3$value = _slicedToArray(_step3.value, 1);
+	        for (var _iterator2 = playersByFoundPairsAmount[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var _step2$value = _slicedToArray(_step2.value, 1);
 
-	            var pairsAmount = _step3$value[0];
+	            var pairsAmount = _step2$value[0];
 
 	            //If any other player has chance to get more or equal to max, game
 	            // goes on
@@ -712,16 +697,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    } catch (err) {
-	        _didIteratorError3 = true;
-	        _iteratorError3 = err;
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
 	    } finally {
 	        try {
-	            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-	                _iterator3.return();
+	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                _iterator2.return();
 	            }
 	        } finally {
-	            if (_didIteratorError3) {
-	                throw _iteratorError3;
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
 	            }
 	        }
 	    }
