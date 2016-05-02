@@ -7,7 +7,7 @@
 		exports["flip-card-game"] = factory(require("wolfy87-eventemitter"));
 	else
 		root["flip-card-game"] = factory(root["wolfy87-eventemitter"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_12__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_11__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -129,27 +129,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	var id = 0;
+	function generate() {
+	    var result = id.toString();
+	    id = id + 1;
+	    return result;
+	}
 
-	var _idGenerator = __webpack_require__(10);
-
-	var _idGenerator2 = _interopRequireDefault(_idGenerator);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = function (state) {
-	    return {
-	        getId: function getId() {
-	            return typeof state.id === 'undefined' ? _idGenerator2.default.generate() : state.id;
-	        }
-	    };
-	}; //FIXME: use id generator to get IDs by default
+	exports.default = {
+	    generate: generate
+	};
 
 /***/ },
 /* 5 */
@@ -161,19 +157,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
+	var _idGenerator = __webpack_require__(4);
+
+	var _idGenerator2 = _interopRequireDefault(_idGenerator);
+
 	var _cardStates = __webpack_require__(1);
 
 	var _cardStates2 = _interopRequireDefault(_cardStates);
 
-	var _HasId = __webpack_require__(4);
-
-	var _HasId2 = _interopRequireDefault(_HasId);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var DEFAULT_OPTIONS = {
-	    id: undefined,
-
 	    state: _cardStates2.default.BACK,
 
 	    /**
@@ -186,35 +180,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	function Card(options) {
 	    options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-	    var getState = function getState() {
+	    var id = _idGenerator2.default.generate();
+	    this.getId = function () {
+	        return id;
+	    };
+
+	    this.getState = function () {
 	        return options.state;
 	    };
-	    var getPairId = function getPairId() {
+	    this.getPairId = function () {
 	        return options.pairId;
 	    };
 
-	    function setState(value) {
+	    this.setState = function (value) {
 	        if (value !== _cardStates2.default.BACK && value !== _cardStates2.default.FACE) {
 	            throw new Error('Unexpected state ' + value);
 	        }
 
 	        options.state = value;
-	    }
+	    };
 
-	    function flip() {
+	    this.flip = function () {
 	        if (options.state === _cardStates2.default.FACE) {
-	            setState(_cardStates2.default.BACK);
+	            this.setState(_cardStates2.default.BACK);
 	        } else if (options.state === _cardStates2.default.BACK) {
-	            setState(_cardStates2.default.FACE);
+	            this.setState(_cardStates2.default.FACE);
 	        }
-	    }
-
-	    return Object.assign({}, (0, _HasId2.default)({ id: options.id }), {
-	        getState: getState,
-	        setState: setState,
-	        getPairId: getPairId,
-	        flip: flip
-	    });
+	    };
 	}
 
 	exports.default = Card;
@@ -245,11 +237,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _cardsGenerator2 = _interopRequireDefault(_cardsGenerator);
 
-	var _playersGenerator = __webpack_require__(11);
+	var _playersGenerator = __webpack_require__(10);
 
 	var _playersGenerator2 = _interopRequireDefault(_playersGenerator);
 
-	var _wolfy87Eventemitter = __webpack_require__(12);
+	var _wolfy87Eventemitter = __webpack_require__(11);
 
 	var _wolfy87Eventemitter2 = _interopRequireDefault(_wolfy87Eventemitter);
 
@@ -395,20 +387,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
-	var _HasId = __webpack_require__(4);
+	var _idGenerator = __webpack_require__(4);
 
-	var _HasId2 = _interopRequireDefault(_HasId);
+	var _idGenerator2 = _interopRequireDefault(_idGenerator);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var DEFAULT_OPTIONS = {
-	    id: undefined
-	};
+	var DEFAULT_OPTIONS = {};
 
 	function Player(options) {
 	    options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-	    return Object.assign({}, (0, _HasId2.default)({ id: options.id }));
+	    var id = _idGenerator2.default.generate();
+
+	    this.getId = function () {
+	        return id;
+	    };
 	}
 
 	exports.default = Player;
@@ -434,8 +428,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        throw new Error('Amount should not be less than zero');
 	    }
 
-	    var cards = [],
-	        pairId = 0;
+	    var cards = [];
+	    var pairId = 0;
 
 	    for (var i = 0; i < amount; i++) {
 	        cards.push(new _Card2.default({
@@ -707,27 +701,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 10 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var id = 0;
-	function generate() {
-	    if (id !== 0) {
-	        id = id + 1;
-	    }
-	    return id.toString();
-	}
-
-	exports.default = {
-	    generate: generate
-	};
-
-/***/ },
-/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -750,9 +723,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var players = [];
 
 	    for (var i = 0; i < amount; i++) {
-	        players.push(new _Player2.default({
-	            id: i
-	        }));
+	        players.push(new _Player2.default());
 	    }
 
 	    return players;
@@ -763,10 +734,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
 
 /***/ }
 /******/ ])
