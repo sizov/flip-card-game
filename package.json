@@ -1,6 +1,6 @@
 {
   "name": "flip-card-game",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Simple implementation of flip card game",
   "main": "dist/index.js",
   "files": [
