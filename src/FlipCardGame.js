@@ -68,6 +68,12 @@ function FlipCardGame(options) {
      * Method to make a move by player.
      * This method changes the state of game by flipping a card.
      * @param options
+     * - player Player (instance) who makes current move
+     * - playerId Alternative to passing Player instance - you can pass ID of
+     * Player instance
+     * - card Card (instance) which passed player wants to flip
+     * - card Alternative to passing Card instance) - you can pass ID of
+     * Card instance
      */
     this.flipCard = function (options) {
         options = options || {};

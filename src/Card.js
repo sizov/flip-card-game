@@ -1,9 +1,7 @@
+import idGenerator from './utils/idGenerator';
 import cardStates from './constants/cardStates.js';
-import HasId from './partials/HasId';
 
 const DEFAULT_OPTIONS = {
-    id: undefined,
-
     state: cardStates.BACK,
 
     /**
@@ -16,36 +14,28 @@ const DEFAULT_OPTIONS = {
 function Card(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-    const getState = () => options.state;
-    const getPairId = () => options.pairId;
+    const id = idGenerator.generate();
+    this.getId = () => id;
 
-    function setState(value) {
+    this.getState = () => options.state;
+    this.getPairId = () => options.pairId;
+
+    this.setState = function (value) {
         if (value !== cardStates.BACK && value !== cardStates.FACE) {
             throw new Error(`Unexpected state ${value}`);
         }
 
         options.state = value;
-    }
+    };
 
-    function flip() {
+    this.flip = function () {
         if (options.state === cardStates.FACE) {
-            setState(cardStates.BACK);
+            this.setState(cardStates.BACK);
         }
         else if (options.state === cardStates.BACK) {
-            setState(cardStates.FACE);
+            this.setState(cardStates.FACE);
         }
-    }
-
-    return Object.assign(
-        {},
-        HasId({id: options.id}),
-        {
-            getState,
-            setState,
-            getPairId,
-            flip
-        }
-    );
+    };
 }
 
 export default Card;

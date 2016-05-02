@@ -43,7 +43,7 @@ test("FlipCardGame flip should change the state of cards if card and player inst
 test("FlipCardGame flip should change the state of cards if cardId is used", (t) => {
     t.plan(1);
 
-    var game = new FlipCardGame();
+    const game = new FlipCardGame();
 
     const players = game.getPlayers();
     const player1 = players[1];

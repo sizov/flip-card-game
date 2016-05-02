@@ -5,12 +5,11 @@ function generate(amount) {
         throw new Error('Amount should not be less than zero');
     }
 
-    var cards = [],
-        pairId = 0;
+    const cards = [];
+    var pairId = 0;
 
-    for (var i = 0; i < amount; i++) {
+    for (let i = 0; i < amount; i++) {
         cards.push(new Card({
-            id: i,
             pairId: pairId.toString()
         }));
 

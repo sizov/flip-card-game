@@ -348,6 +348,5 @@ test("gameUtils should identify that there is no winner yet when" +
         cards,
         pairsFoundByPlayers
     });
-    console.log(winners);
     t.equal(winners.length, 0);
 });

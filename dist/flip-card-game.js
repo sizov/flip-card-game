@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
-	var _FlipCardGame = __webpack_require__(5);
+	var _FlipCardGame = __webpack_require__(6);
 
 	var _FlipCardGame2 = _interopRequireDefault(_FlipCardGame);
 
@@ -68,11 +68,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _cardStates2 = _interopRequireDefault(_cardStates);
 
+	var _gameEvents = __webpack_require__(2);
+
+	var _gameEvents2 = _interopRequireDefault(_gameEvents);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
 	    FlipCardGame: _FlipCardGame2.default,
-	    cardStates: _cardStates2.default
+	    cardStates: _cardStates2.default,
+	    events: _gameEvents2.default
 	};
 
 /***/ },
@@ -99,6 +104,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 	exports.default = {
+	    CARD_FLIP_EVENT: 'cardFlipEvent',
+	    PLAYER_FOUND_PAIR_EVENT: 'playerFoundPairEvent',
+	    PLAYER_FINISHED_FLIPPING_PAIR_EVENT: 'playerFinishedFlippingPairEvent',
+	    GAME_OVER_EVENT: 'gameOverEvent',
+	    GAME_DRAW_EVENT: 'gameDrawEvent'
+	};
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
 	    OVER: 'gameOver',
 	    DRAW: 'drawGame',
 	    PLAYING: 'playingGame',
@@ -106,7 +128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -130,7 +152,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}; //FIXME: use id generator to get IDs by default
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -143,7 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _cardStates2 = _interopRequireDefault(_cardStates);
 
-	var _HasId = __webpack_require__(3);
+	var _HasId = __webpack_require__(4);
 
 	var _HasId2 = _interopRequireDefault(_HasId);
 
@@ -198,7 +220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Card;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -207,11 +229,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
-	var _gameStates = __webpack_require__(2);
+	var _gameStates = __webpack_require__(3);
 
 	var _gameStates2 = _interopRequireDefault(_gameStates);
 
-	var _gameEvents = __webpack_require__(7);
+	var _gameEvents = __webpack_require__(2);
 
 	var _gameEvents2 = _interopRequireDefault(_gameEvents);
 
@@ -300,6 +322,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Method to make a move by player.
 	     * This method changes the state of game by flipping a card.
 	     * @param options
+	     * - player Player (instance) who makes current move
+	     * - playerId Alternative to passing Player instance - you can pass ID of
+	     * Player instance
+	     * - card Card (instance) which passed player wants to flip
+	     * - card Alternative to passing Card instance) - you can pass ID of
+	     * Card instance
 	     */
 	    this.flipCard = function (options) {
 	        options = options || {};
@@ -358,7 +386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = FlipCardGame;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -367,7 +395,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
-	var _HasId = __webpack_require__(3);
+	var _HasId = __webpack_require__(4);
 
 	var _HasId2 = _interopRequireDefault(_HasId);
 
@@ -386,23 +414,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Player;
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    CARD_FLIP_EVENT: 'cardFlipEvent',
-	    PLAYER_FOUND_PAIR_EVENT: 'playerFoundPairEvent',
-	    PLAYER_FINISHED_FLIPPING_PAIR_EVENT: 'playerFinishedFlippingPairEvent',
-	    GAME_OVER_EVENT: 'gameOverEvent',
-	    GAME_DRAW_EVENT: 'gameDrawEvent'
-	};
-
-/***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -412,7 +423,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
-	var _Card = __webpack_require__(4);
+	var _Card = __webpack_require__(5);
 
 	var _Card2 = _interopRequireDefault(_Card);
 
@@ -428,7 +439,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    for (var i = 0; i < amount; i++) {
 	        cards.push(new _Card2.default({
-	            id: i,
 	            pairId: pairId.toString()
 	        }));
 
@@ -460,7 +470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _cardStates2 = _interopRequireDefault(_cardStates);
 
-	var _gameStates = __webpack_require__(2);
+	var _gameStates = __webpack_require__(3);
 
 	var _gameStates2 = _interopRequireDefault(_gameStates);
 
@@ -726,7 +736,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
-	var _Player = __webpack_require__(6);
+	var _Player = __webpack_require__(7);
 
 	var _Player2 = _interopRequireDefault(_Player);
 
