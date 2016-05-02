@@ -57,8 +57,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
+	exports.flipCardStates = exports.flipCardGameEvents = exports.FlipCardGame = undefined;
 
 	var _FlipCardGame = __webpack_require__(6);
 
@@ -74,11 +75,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = {
-	    FlipCardGame: _FlipCardGame2.default,
-	    cardStates: _cardStates2.default,
-	    events: _gameEvents2.default
-	};
+	exports.FlipCardGame = _FlipCardGame2.default;
+	exports.flipCardGameEvents = _gameEvents2.default;
+	exports.flipCardStates = _cardStates2.default;
 
 /***/ },
 /* 1 */
