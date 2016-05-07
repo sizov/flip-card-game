@@ -2,7 +2,7 @@
   "name": "flip-card-game",
   "version": "0.0.8",
   "description": "Simple implementation of flip card game",
-  "main": "dist/index.js",
+  "main": "dist/flip-card-game.js",
   "files": [
     "bin/",
     "dist/"
